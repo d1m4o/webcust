@@ -1,0 +1,130 @@
+body textarea{
+  border:1px solid transparent;
+}
+body input[type='text']{
+  border:1px solid transparent;
+}
+
+.cu_form input.err,.cu_form textarea.err{
+  border-color:red;
+}
+.cu_form input,.cu_form textarea{
+  transition:all 0.3s;
+}
+
+.ourworks_content{
+  display:none;
+}
+
+.LangBox .LAT {
+    background: url(/web/img/lang_lv.svg) no-repeat 0 0 !important;
+}
+.LangBox .RUS {
+    background: url(/web/img/lang_ru.svg) no-repeat 0 0 !important;
+}
+.LangBox .ENG {
+    background: url(/web/img/lang_en.svg) no-repeat 0 0 !important;
+}
+.LangBox .EST {
+    background: url(/web/img/lang_est.svg) no-repeat 0 0 !important;
+}
+.LangBox .LT {
+    background: url(/web/img/lang_lt.svg) no-repeat 0 0 !important;
+}
+.filter_option{
+  display:none;
+}
+header .Cart a{
+  height: 25px;
+  width: 28px;
+  /*
+  padding-right: 71px;
+  background-size: 21px;
+  background-position: right;
+  */
+}
+
+/* document */
+/* autocomplete styles */
+#ui-id-1 li {
+  background: #f4f5ff;
+  font-size: 13px;
+  font-weight: bold;
+  color: #405584;
+}
+
+#ui-id-1 li div{
+  padding-left: 5px;
+}
+ul.ui-autocomplete.ui-menu{
+  /* border:unset; */
+  padding: 0px 15px;
+  color: #405584;
+  max-width: 370px;
+}
+
+.ui-menu-item .ui-menu-item-wrapper.ui-state-active {
+  border: none;
+  background: #405584 !important;
+  /* font-weight: bold !important;*/
+  color: #ffffff !important;
+}
+/**/
+/* Prodcts list*/
+.ProductList .ProductList-menu { 
+  max-height: 460px;
+  overflow: auto; 
+}
+
+
+.ProductList .ProductList-menu ul li{ 
+  max-height: 460px;
+  margin-bottom: 5%;
+}
+
+.ProductList .ProductList-item .ProdInfo .text{
+  height: 44px;
+}
+.ProdImg figure {
+  width: 100%; /* Ширина области */
+  /* Высота области */
+  height: 280px;
+  min-height: 280px;
+  max-height: 600px;
+  margin: 0; /* Обнуляем отступы */
+  overflow: hidden; /* Прячем всё за пределами */
+  /* min-width: 600px;  Минимальная ширина */
+ }
+
+/* Video */
+.VideoInstruction {
+  margin-bottom: -30;
+}
+/**/
+.page-item.active .page-link {
+  background-color: #405584;
+  border-color: #405584;
+}
+.page-link {
+  color: #405584;
+}
+.page-link:focus {
+  box-shadow: none;
+}
+/* */
+.GorizontalList > .row{
+  max-height:122px;
+}
+
+  .ProductList .filter ul li.active a {
+    border-color: #dd4d44;
+    background: #fff;
+    color: #dd4d44;
+    position: relative;
+    /*padding-right: 30px;*/
+  }
+
+.ProductList .ProductList-item .ProdInfo .text {
+  max-height: 44px;
+  overflow: hidden;
+}
