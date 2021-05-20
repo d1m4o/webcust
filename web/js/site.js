@@ -1,44 +1,85 @@
-const a =  $.ajax({
-  type: "GET",
-  url: "../WebGetFilters.hal"
-});
 
-// filtrate by url
-const filtrateByUrl = () => {
-  // const origin = window.location.origin;
-  // const structureUrl ='/veikals/catalog';
-  const search = window.location.search;
-  if (search.indexOf('?wsh=') === -1) return;
-  console.log('search = ', search);
-  console.log('lstindexof = ', search.lastIndexOf('='));
-  console.log('indexof = ', search.indexOf('?wsh='));
-  const filterCode = search.slice(search.lastIndexOf('=') + 1, search.length);
-  console.log('filterCode = ', filterCode);
-  if (!filterCode) return
-  return filterCode;
-};
-
-const SetFilterProduct = () => {
-  let liWSH = $(".filter-buttons li").map((e,l) => {
-    if ($(l).attr('list-cls') == 'WSH') return l;
+let filterNames = [];
+let waw = () => 1;
+// product info page
+const productInfoPriceGenerate = (productCode) => {
+  if (!productCode) return;
+  // http://127.0.0.1:81/WebProductPrices.hal?prod=102
+  console.log('url = ', `${window.location.origin}/WebProductPrices.hal?prod=${productCode}`);
+  $.ajax({
+    type: "GET",
+    url: `${window.location.origin}/WebProductPrices.hal?prod=${productCode}`,
+    success: (data) => {
+      if (!data) return;
+      data = JSON.parse(data);
+      const prices = data.prices;
+      console.log('prices = ', prices);
+      // set first price
+      let colorC = $(".jq-selectbox select[name='color']").val();
+      let typeC = $(".jq-selectbox select[name='type']").val();
+      let k = `${typeC}_${colorC}`;
+      let hasP = false;
+      for (let price of prices) {
+        if (price[k]) {
+          $('.Product .DetailsProd .ProdLi .Price').html(`€${price[k]}`);
+          hasP = true;
+        }
+      }
+      if (!hasP)  $('.Product .DetailsProd .ProdLi .Price').html('-');
+      //
+      $(".jq-selectbox select[name='type']").change((e) => {
+        let typeCode = e.target.value;
+        let colorCode = $(".jq-selectbox select[name='color']").val();
+        let key = `${typeCode}_${colorCode}`;
+        let hasPrice = false;
+        for (let price of prices) {
+          if (price[key]) {
+            $('.Product .DetailsProd .ProdLi .Price').html(`€${price[key]}`);
+            hasPrice = true;
+          }
+        }
+        if (!hasPrice)  $('.Product .DetailsProd .ProdLi .Price').html('-');
+        /*
+        let keys = prices.map(price => Object.keys(price)[0]);
+        let colorCodes = [];
+        for (let k of keys) {
+          let str = k.slice(0, k.lastIndexOf('_'));
+          if (str == typeCode) colorCodes.push(k.slice(k.lastIndexOf('_') + 1, k.length));
+        }
+        console.log('colorCodes = ', colorCodes);
+        $(".jq-selectbox select[name='color'] option").each((i, el) => {
+          let val = $(el).val();
+          console.log('val = ', val);
+          if (colorCodes.includes(val)) {
+            $(`.color-class-${val}`).show();
+            // $(el).show();
+          } else {
+            $(`.color-class-${val}`).hide(); // $(el).hide();
+          }
+        });
+        */
+      });
+      $(".jq-selectbox select[name='color']").change((e) => {
+        let typeCode = $(".jq-selectbox select[name='type']").val();
+        let colorCode = e.target.value;
+        let key = `${typeCode}_${colorCode}`;
+        let hasPrice = false;
+        for (let price of prices) {
+          if (price[key]) {
+            $('.Product .DetailsProd .ProdLi .Price').html(`€${price[key]}`);
+            hasPrice = true;
+          }
+        }
+        if (!hasPrice)  $('.Product .DetailsProd .ProdLi .Price').html('-');
+      });
+      
+    },
+    error: (e) => {
+      console.log('error = ', e);
+    }
   });
-  console.log(liWSH);
-  let cls = $(liWSH).attr("list-cls");
-
-  if ($(".active_filter").length>0){
-    $(".active_filter").remove();
-  } else {
-    list = $(".filter_option .filter_list" + cls + " > div");
-    sel = $(list).clone(true,true);
-    $(sel).addClass("active_filter");
-    $(".product-catalog-list").prepend(sel);
-    SetFilterSelection(sel,$(liWSH));
-  }
-  
-  // console.log('filter = ', filter);
-  // $(".filter_menu").addClass('active_filter');
-  
 };
+//
 
 const onFilterClick = (param, param2) => {
   const contextsContainer = document.getElementsByClassName('resultProducts')[0];
@@ -51,8 +92,94 @@ const onFilterClick = (param, param2) => {
           $(el).removeClass('filteredItem')
       }
   }
-  paginationProducts.rebuild();
+  setTimeout(() => {
+    paginationProducts.rebuild();
+  }, 500);
 };
+// filtrate by url
+const filtrateByUrl = () => {
+  const search = window.location.search;
+  if (search.indexOf('?wsh=') === -1) return;
+  const filterCode = search.slice(search.lastIndexOf('=') + 1, search.length);
+  if (!filterCode) return
+  return filterCode;
+};
+
+const SetFilterProduct = (searchCode) => {
+  let liWSH = $(".filter-buttons li").map((e,l) => {
+    if ($(l).attr('list-cls') == 'FilterType') return l;
+  });
+
+  let cls = $(liWSH).attr("list-cls");
+  var l = $(liWSH);
+  cls = $(l).attr("list-cls");
+  if ($(".active_filter").length>0){
+    $(".active_filter").remove();
+  } else {
+    list = $(".filter_option .filter_list" + cls + " > div");
+    sel = $(list).clone(true,true);
+    $(sel).addClass("active_filter");
+    $(".product-catalog-list").prepend(sel);
+    SetFilterSelection(sel,l);
+    // start
+    var type = 'FilterType';
+    var opt = $(".filter-buttons > li[list-cls='" + type + "']");
+
+    var options = $(opt).data("filter_options");
+    if (!options){
+      options = [];
+    }
+    var strvals = $(opt).data("filter_options_str");
+    if (!strvals){
+      strvals = [];
+      $(opt).data("origstr",$(opt).find("a").html());
+    }
+    
+    cls = cls.toUpperCase();
+    var inx = options.indexOf(cls);
+    if (inx>-1){
+      options.splice(inx,1);
+      strvals.splice(inx,1);
+    } else {
+      $(".resultProducts div ul li").each((i, el) => {
+        cls = $(el).attr("cls");
+        if (cls === searchCode) {
+          $(el).toggleClass("active_filter_option");
+          $(el).toggleClass("active");
+          options.push(cls);
+          strvals.push($(el.firstElementChild).html());
+        }
+      });
+    }
+
+    $(opt).data("filter_options",options);
+    $(opt).data("filter_options_str",strvals);
+    if (strvals.length>0) {
+      $(opt).find("a").html(strvals.join(","));
+    } else {
+      $(opt).find("a").html($(opt).data("origstr"));
+    }
+    RefreshFilters();
+    
+    if (filterNames.includes($(opt).text().toUpperCase())) {
+      $(opt).removeClass('active');
+    } else {
+      $(opt).addClass('active');
+      waw = () => {
+          $(opt).data("filter_options", []);
+          $(opt).data("filter_options_str",[]);
+          $(opt).find("a").html($(opt).data("origstr"));
+          RefreshFilters();
+          onFilterClick();
+          $(opt).removeClass('active');
+      };
+      $(opt).find("a").append(` <span id=\'span\' onclick='waw()'  class=\'fa fa-times fa-lg\' aria-hidden=\'true\'></span>`);        
+    }
+    onFilterClick(); // rebuild pagination after filtrated
+    // end
+  }
+};
+
 
 function SetContactForm(form){
     $(form).find("input[type='text']").each(function(){
@@ -94,7 +221,11 @@ function ClearContactForm(form){
 }
 
 $(document).ready(function(){
+  console.log('ready');
   //paginationProducts start
+  $(".filter-buttons li a").each(( index, value ) => {
+    filterNames.push(value.innerText.toUpperCase());
+  });
   $(function(){
     paginationProducts = new $.smFilteredPagination($("#paginationProducts"), {
         pagerItems: 'div.productItem',
@@ -110,30 +241,38 @@ $(document).ready(function(){
     } else paginationProducts.setItemsPerPage(6);
 
   });
-  filtrateByUrl();
-  SetFilterProduct();
-  console.log('SetFilterProduct(); = ', SetFilterProduct());
+  const filter = filtrateByUrl(); 
+  if (filter) SetFilterProduct(filter);
   // end
+
+  // productInfo code
+  if (window.location.pathname.indexOf('veikals/productinfo') != -1) {
+    const path = window.location.pathname;
+    const itemCode = path.slice(path.lastIndexOf('/') + 1, path.length);
+    productInfoPriceGenerate(itemCode);
+  }
+  // end -------------
   // products dropdown
   const [ productElement ] = document.getElementsByClassName('ArrowDownMenu');
   let dropdownProductsHTML = '';
    $.ajax({
     type: "GET",
-    url: "../WebGetFilters.hal",
+    url: `${window.location.origin}/WebGetFilters.hal`,
     success: (data) => {
       if (!data) return;
       data = JSON.parse(data);
-      if (!data['WSH'] || !data['WSH'].length) return;
-      const wshData = data['WSH'].map(el => el);
-      console.log('wshData = ', wshData);
+      if (!data['FilterType'] || !data['FilterType'].length) return;
+      const wshData = data['FilterType'].map(el => el);
       for (let el of wshData) {
         dropdownProductsHTML += `<li><a href=${window.location.origin}/veikals/catalog?wsh=${Object.keys(el)[0]}> ${Object.values(el)[0]} </a></li>`;
       }
       if (dropdownProductsHTML) $(productElement).append(`<ul> ${dropdownProductsHTML} </ul>`);
+    },
+    error: (e) => {
+      console.log('error = ', e);
     }
   });
-  // 
-
+  //
   if ($(".cu_form").length>0) {
   
     $(".cu_form form").submit(function(e){e.stopPropagation(); return false; });
@@ -178,7 +317,6 @@ $(document).ready(function(){
 
   $(".DetailsProd .btns-red").click(function(){
     var form = $(this).closest("form").get(0);
-    //consol.elog(form);
     $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.qty.value + "&item=" + form.item.value,function(data){
       //alert(data);
       //refresh basket
@@ -196,6 +334,11 @@ $(document).ready(function(){
   
   
   });
+  /*
+  $("[data-target='#ModalLogin']").click((e) => {
+    console.log('e = ', e);
+
+  });*/
   $("[data-target='#ModalAddCart']").click(function(e){
     var itemcode = "";
     var a = this;
@@ -256,7 +399,7 @@ $(document).ready(function(){
     e.stopPropagation();
     e.preventDefault();
     var l = $(this).parent();
-    console.log('l = ',l);
+    //console.log('l = ',l);
     cls = $(l).attr("list-cls");
     if ($(".active_filter").length>0){
       $(".active_filter").remove();
@@ -269,22 +412,16 @@ $(document).ready(function(){
     }
   });
 
-  let filterNames = [];
-  $(".filter-buttons li a").each(( index, value ) => {
-    filterNames.push(value.innerText.toUpperCase());
-  });
-
   $(".filter_menu ul li a").click(function(e){
     e.stopPropagation();
     e.preventDefault();
     var l = $(this).parent();
-    console.log(' l = ', l);
+    
     $(l).toggleClass("active_filter_option");
     $(l).toggleClass("active");
     
     var type = $(this).closest(".filter_menu").attr("list-type");
     var opt = $(".filter-buttons > li[list-cls='" + type + "']");
-    
     var options = $(opt).data("filter_options");
     if (!options){
       options = [];
@@ -303,6 +440,7 @@ $(document).ready(function(){
       options.push(cls);
       strvals.push($(this).html());
     }
+   
     $(opt).data("filter_options",options);
     $(opt).data("filter_options_str",strvals);
     if (strvals.length>0){
@@ -313,11 +451,9 @@ $(document).ready(function(){
     RefreshFilters();
     
     onFilterClick(); // rebuild pagination after filtrated
-    
     if (filterNames.includes($(opt).text().toUpperCase())) {
       $(opt).removeClass('active');
     } else {
-      
       $(opt).addClass('active');
       $(opt).find("a").append(`<span id=\'span\' class=\'fa fa-times fa-lg\' aria-hidden=\'true\'> </span>`);
       setTimeout(() => {
@@ -394,7 +530,6 @@ function RefreshFilters(){
 
 function SetFilterSelection(sel,l){
   var opt = $(l).data("filter_options");
-  console.log('opt = ', opt);
   if (opt){
     for (var i in opt){
       var el = $(sel).find("li[cls='" + opt[i] + "']");
@@ -446,4 +581,3 @@ function Pagination(list,perpage){
     $(this.page_element).find("li:first-child a").click();
   }
 }
-

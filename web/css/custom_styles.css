@@ -34,16 +34,42 @@ body input[type='text']{
 .filter_option{
   display:none;
 }
+
+header   {
+  border-bottom: 1px solid #d5d8ee;
+  margin-bottom: 30px;
+}
+header .Cart {
+  float: right;
+  margin-right: 20px;
+  margin-top: 25px;
+  text-align: center;
+  font-size: 10px;
+  width: 28px;
+  position: relative;
+}
+
 header .Cart a{
   height: 25px;
   width: 28px;
-  /*
-  padding-right: 71px;
-  background-size: 21px;
-  background-position: right;
-  */
+  display: block;
+  background: url(../img/cart-ico.svg) no-repeat;
+  background-size: 100%;
 }
-
+header .Cart span {
+  position: absolute;
+  left: 6px;
+  top: 3px;
+  background: #405584;
+  color: #fff;
+  border-radius: 100%;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+  min-width: 15px;
+  min-height: 15px;
+  line-height: 15px;
+  margin-top: 3px;
+}
 /* document */
 /* autocomplete styles */
 #ui-id-1 li {

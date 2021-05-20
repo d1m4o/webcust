@@ -1,13 +1,24 @@
 $(document).ready(function(){
     $('.TopMenu > ul > li').has( 'ul' ).addClass('ArrowDownMenu');
     $('.TopMenu > ul > li').hover(function(){
-        console.log('tyt');
         $(this).find('ul').stop().slideToggle(200);}
-    ); 
+    );/*
+    notLoggedIn
     $('.Login').click(function (){
         $('.LoginInner').toggle();
         return false;
-    });   
+    }); */
+    // console.log('docready = ', JSON.parse(JSON.stringify($('#loggedIn'))));
+    $('#loggedIn').click(function (){
+        console.log('loggedIn');
+        $('.LoginInner').toggle();
+        return false;
+    });
+    $('#checkoutBtn').click((e) => {
+        if (document.getElementById('loggedIn')) {
+            console.log('тут будет халовская функция, которая создаст заказ');
+        } else $('#ModalLogin').modal('show');
+    });
     $('#RespBurg').click(function (){
         $('.TopMenu').toggle();
         $(this).toggleClass('active');
@@ -107,7 +118,7 @@ $(document).ready(function(){
     $('area').click(function (){
         $('area').addClass('active').css({"opacity":"1"});
     }); */
-    console.log('js 10000000000010 = ');
  });
 
 
+// http://localhost:81/dologin&company=3&login=1005&passwd=123
