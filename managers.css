@@ -1,0 +1,616 @@
+
+
+body{
+  margin:0px;
+  font-size:15px;
+  font-family:"Helvetica Neue","helvetica","Arial","Verdana",sans-serif
+}
+
+.login_title{
+  background-color:#ccedfe;
+  color:#333;
+  text-transform:uppercase;
+  padding:5px 20px;
+}
+
+.login_wrap{
+  width:300px;
+  height:250px;
+  position:absolute;
+  left:50%;
+  margin-left:-150px;
+  top:50%;
+  margin-top:-125px;
+}
+
+.loginlabel{
+  display:block;
+}
+
+#loginbox{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  border:1px solid #eee;
+  border-top:none;
+  flex-direction: column;
+  padding-bottom:20px;
+}
+
+.managers_window{
+  width:1300px;
+  margin:0 auto;
+  margin-top:40px;
+}
+#list .line,.head_columns .line{
+  border-bottom:1px solid #333;
+  clear:both;
+  position:relative;
+}
+
+#list .line .head_fields > div,.head_columns .line .head_fields > div{
+  float:left;
+  width:100px;
+  padding:5px 15px;
+  padding-left:5px;
+}
+#list .line .head_fields > div.okflag,#list .line .head_fields > div.okflag{
+  width:20px;
+}
+.head_columns .line .head_fields > div.okflag{
+  width:20px;
+}
+.line .orddate,.line .confirmdate,.line .planship,.line .delivered,.line .duedate{
+  width:80px !important;
+}
+.line .sernr{
+  width:80px !important;
+}
+.tick_mark{
+  width:20px;
+}
+.print_order_doc,.drilldown{
+  text-decoration:underline;
+  cursor:pointer;
+}
+.head_columns .drilldown{
+  text-decoration:none;
+  cursor:unset;
+}
+
+#headers{
+  height:30px;
+}
+
+#list .line .rows{
+  width:100%;
+  display:none;
+  padding-left: 60px;
+  box-sizing: border-box;
+  padding-right: 0px; 
+  position:relative; 
+  overflow:hidden;
+}
+#list .line .rows::before{
+  position:absolute;
+  top:10px;
+  bottom:10px;
+  left:30px;
+  border-left:3px solid #333;
+  content:"";
+}
+
+.rows .line > div{
+  float:left;
+  width:100px;
+  padding:5px 15px;
+  padding-left:5px;
+}
+
+.rows .line > div.inprod,.rows .line > div.produced,.rows .line > div.price,.rows .line > div.discount{
+  width:45px;
+}
+.rows .line .name{
+  width: 260px !important;
+  font-size: 13px;
+/*
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+*/
+}
+.line .contact{
+  width:190px !important;
+}
+.line .email{
+  width:210px !important;
+}
+.line .contact{
+}
+.line .custname{
+  width: 200px !important;
+  /*white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;*/
+}
+.line .custcode{
+  width: 50px !important;
+}
+.line .item{
+  width: 170px !important;
+}
+.line .sum{
+  width: 70px !important;
+}
+.line .code{
+  width:60px !important;
+}
+.line .width,.line .length{
+  width:70px !important;
+}
+.line .qty,.line .qty2,.line .unit{
+  width:60px !important;
+}
+.line .phone{
+  width:130px !important;
+}
+
+#pagination{
+  clear:both;
+  margin:0 auto;
+  display:flex;
+  justify-content: center;
+  padding:30px 0px;
+}
+.price,.discount,.sum,.vatsum,.total,.qty,.qty2,.vRebate,.quant,.UnitZVal,.UnitXVal,.Coefficient{
+  text-align:right;
+}
+.Price input,.Sum input,.vRebate input,.UnitZVal input,.UnitXVal input,.Quant input{
+  text-align:right;
+}
+.page_el{
+  margin:0px 15px;
+  cursor:pointer;
+  text-decoration:underline;
+}
+
+.page_el.active_page{
+  cursor:unset;
+  text-decoration:none;
+}
+
+.managers_nav{
+  background:#ccedfe;
+  padding:0px;
+}
+.managers_nav .managers_menu{
+  width:1250px;
+  margin:0 auto;
+  display:flex;
+  border-left:1px solid white;
+  justify-content: space-between;
+}
+
+.managers_nav .managers_menu .main_nav{
+  display:flex;
+}
+
+.managers_nav .managers_menu .managers_menu_item{
+  color:#333;
+  border-right:1px solid white;
+  padding:20px 30px;
+  cursor:pointer;
+}
+#logout_nav{
+  border-left:1px solid white;
+}
+
+.managers_nav .managers_menu .managers_menu_item:hover{
+  background-color:white;
+}
+.managers_nav .managers_menu .managers_menu_item.selected{
+  background-color:white;
+  color:#333;
+}
+
+.edit_record,.print_record{
+  position:absolute;
+  width:30px !important;
+  height:30px;
+  background:url(/images/edit.png) no-repeat center center;
+  background-size:20px;
+  top:0px;
+  left:-30px;
+  padding:0px !important;
+}
+.head_columns .edit_record,.head_columns .print_record{
+  display:none;
+}
+
+.print_record{
+  background-image:url(/images/print.png);
+}
+
+.window_pop{
+  position:fixed;
+  top:0px;
+  bottom:0px;
+  left:0px;
+  right:0px;
+  background:rgba(0,0,0,0.3);
+}
+
+.window_frame{
+  width:1250px;
+  margin:0 auto;
+  height:90%;
+  margin-top:2%;
+  background:white;
+  box-sizing:border-box;
+  padding:30px;
+  position:relative;
+  padding-top:50px;
+  overflow:scroll;
+  padding-bottom:30px;
+}
+
+.window_title{
+  position:absolute;
+  background-color:#ccedfe;
+  color:#333;
+  top:0px;
+  padding:10px 30px;
+  left:0px;
+  right:0px;  
+}
+
+.window_close{
+  position:absolute;
+  right:5px;
+  top:3px;
+  width:30px !important;
+  height:30px;
+  background:url(/images/close_white.png) no-repeat center center;
+  background-size:20px;
+  cursor:pointer;
+}
+.matrix_head .matrix_line .matrix_field{
+  padding:0px 5px;
+}
+.matrix_line .matrix_field{
+  float:left;
+  box-sizing:border-box;
+}
+.matrix_line .matrix_field input{
+  width:100%;
+  padding:4px 5px;
+}
+.matrix_templ{
+  display:none;
+}
+.window_frame .editfield,.window_frame .matrix_frame,.window_frame .static_text,.window_frame .checkbox,.filters .filterfield{
+  position:absolute;
+}
+.window_frame .editfield .ef_input input,.window_frame .editfield .ef_input select,.filters .filterfield input{
+  width:100%;
+}
+.window_frame .editfield .ef_label,.filters .filterfield .ef_label{
+  position:absolute;
+  text-align:right;
+  left:-160px;
+  width:150px;
+}
+.chb_input{
+  float:left;
+  margin-right:15px;
+}
+.chb_label{
+  width:200px;
+}
+.record_save,.new_record,.run_report,.login_btn,.duplicate_record,.print_inline_record{
+  position:absolute;
+  right:50px;
+  top:6px;
+  padding:3px 20px;
+  background:rgba(51, 182, 254,1);
+  border:1px solid rgba(255,255,255,0.5);
+  cursor:pointer;
+  transition:all 0.3s;
+  opacity:0.3;
+}
+.record_save.active,.new_record,.run_report,.login_btn,.print_inline_record.active{
+  opacity:1;
+}
+.print_inline_record{
+  right:360px;
+}
+.filters .new_record{
+  position:relative;
+  float:right;
+  background-color:rgba(51, 182, 254, 0.8);/*button*/
+  color:#333;
+}
+.window_title .new_record{
+  right:263px;
+  opacity:1;
+}
+.window_title .duplicate_record{
+  right:166px;
+  opacity:1;
+}
+.addline.mcontext_main{
+  border:1px solid rgba(255,255,255,0.5);
+  cursor:pointer;
+  transition:all 0.3s;
+  background-color:#33b6fe;
+  color:#333;
+  display:inline-block;
+  padding:3px 20px;
+  margin-top:5px;
+}
+.filters{
+  height:37px;
+  position:relative;
+}
+.record_save.active:hover{
+  background:rgba(255,255,255,0.3);
+}
+.matrix_frame{
+  padding-left:60px;
+  overflow:scroll;
+}
+.matrix_context{
+  position:absolute;
+  left:-25px;
+  top:1px;
+}
+.context_icon{
+  background:url("/images/dropdown.png") no-repeat center center;
+  background-size:20px;
+  height:20px;
+  width:20px;
+  float:left;
+  cursor:pointer;
+}
+.matrix_line{
+  position:relative;
+  height:25px;
+  clear:both;
+}
+.context_menu{
+  display:none;
+  position:absolute;
+  top:23px;
+  left:0px;
+  width:190px;
+  z-index: 99;
+  background: #ddd;  
+}
+.mcontext_item{
+  padding:5px 15px;
+  width:100%;
+  border-bottom:1px solid #333;
+  box-sizing:border-box;
+  cursor:pointer;
+}
+.context_menu.active{
+  display:block;
+}
+
+.text_field.matrix_field{
+  text-align:right;
+  box-sizing:border-box;
+  padding-right:20px;
+  line-height:23px;
+}
+.matrix_field select{
+  width:100%;
+}
+
+.window_type4,.window_type5{
+  width:500px;
+  height:400px;
+  margin-top:-200px;
+  top:50%;
+  overflow:visible;
+}
+.sEndDate .ef_label,.filterfield .ef_label{
+  width:50px !Important;
+  left:-60px !Important;
+}
+.filterfield.Name .ef_label,.filterfield.RegNr .ef_label{
+  width:130px !Important;
+  left:-140px !Important;
+}
+.head_fields {
+  min-height: 30px;
+}
+div.clear{
+  clear:both;
+  width:auto !important;
+  float:none  !important;
+  padding:0px  !important;
+  
+}
+
+.logout_back{
+  position:fixed;
+  top:0px;
+  bottom:0px;
+  left:0px;
+  right:0px;
+  background:rgba(0,0,0,0.3);
+}
+.logout_msg{
+  width:300px;
+  margin:0 auto;
+  height:auto;
+  top:50%;
+  background:white;
+  box-sizing:border-box;
+  padding:30px;
+  position:relative;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.logout_text{
+}
+.login_btn{
+  position:static;
+  background-color: rgba(51, 182, 254, 0.8);;/*button*/
+  color: #333;
+  display:inline-block;
+  margin:0 auto;
+  margin-top:20px;
+  
+}
+.head_columns .head_fields > div{
+  font-weight:bold;
+}
+
+.line .rows .line:first-child{
+  font-weight:bold;
+  font-size: 13px;
+  border-top:  none !important;
+  border-bottom: none !important;
+}
+.line .rows .line{
+  border-top: 1px dashed #999 !important;
+  border-bottom: none !important;
+}
+
+.subtotal_str{
+  font-weight:bold;
+}
+.subtotal{
+  margin-left:210px;
+  width:500px !important;
+  text-align:right;
+}
+.subtotal.subtotaliv{
+  margin-left:30px;
+}
+.line .rows .subtotal_line{
+  font-style:italic;
+  border: none !important;
+}
+.subtotal_line .qty2,.subtotal_line .unit,.subtotal_line .price,.subtotal_line .discount,.subtotal_line .sum{
+  border-top: 1px dashed #999 !important;
+}
+.copyrow_text{
+  float:left;
+  margin-right:5px;
+}
+.copyrow_input{
+  float:left;
+  margin-right:5px;
+}
+.copyrow_input input{
+  width:35px;
+}
+.copyrow_do{
+
+}
+.ef_input input{
+  transition:all 0.3s;
+}
+.ef_input input.error{
+  border-color:red;
+}
+.editfield.mandatory input,.editfield.mandatory .chosen-default{
+  border: 1px solid #ff7d03;
+}
+.user_filter{
+  float:right;
+}
+.uf_button{
+  float:left;
+  background:rgba(51, 182, 254,1);
+  border:1px solid rgba(255,255,255,0.5);
+  cursor:pointer;
+  transition:all 0.3s;
+  opacity:0.3;
+  padding: 3px 20px;
+  position:relative;
+  top: 6px;
+}
+.uf_button.selected{
+  opacity:1;
+}
+.editfield.Sum1 input,.editfield.Sum4 input{
+  text-align:right;
+}
+
+.expand_lines{
+  position:absolute;
+  left:-40px;
+  top:0px;
+  height:40px;
+  width:40px;
+  background:url("/images/expand.png") no-repeat center center;
+  background-size:40px;
+  transition:all 0.3s;
+  transform: rotate(90deg);
+}
+.expand_lines.active{
+  transform: rotate(0deg);
+}
+.line.contactline .contactname{
+  width:250px !important;
+}
+.line.contactline .phone{
+  width:150px !important;
+}
+.line.contactline .mobile{
+  width:150px !important;
+}
+.line.contactline .email{
+  width:400px !important;
+}
+
+.matrix_remove{
+  position:absolute;
+  left:-50px;
+  top:2px;
+}
+
+.matrix_remove_head{
+  position:absolute;
+  left:-50px;
+  top:2px;
+}
+.remove_checkbox{
+  float:left;
+  margin-right:8px;
+}
+.remove_icon{
+  width:20px;
+  height:20px;
+  background:url("/images/remove.png") no-repeat center center;
+  background-size:30px;
+  overflow:hidden;
+  cursor:pointer;
+}
+.print_order_doc.invoices{
+  text-decoration:none;
+}
+.print_order_doc.invoices .link{
+  text-decoration:underline;
+}
+.line .invoiced{
+  width:250px !important;
+}
+.line .emailsent{
+  width:50px !important;
+}
+.line .duedays{
+  width:50px !important;
+}
+
+.editfield textarea{
+  width:100%;
+  height:100%;
+  border-color: #ddd;
+}
