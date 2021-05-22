@@ -102,6 +102,7 @@ const filtrateByUrl = () => {
   if (search.indexOf('?wsh=') === -1) return;
   const filterCode = search.slice(search.lastIndexOf('=') + 1, search.length);
   if (!filterCode) return
+  console.log('filterCode = ', filterCode);
   return filterCode;
 };
 
@@ -109,10 +110,11 @@ const SetFilterProduct = (searchCode) => {
   let liWSH = $(".filter-buttons li").map((e,l) => {
     if ($(l).attr('list-cls') == 'FilterType') return l;
   });
-
+  console.log('liWSH = ', liWSH);
   let cls = $(liWSH).attr("list-cls");
   var l = $(liWSH);
   cls = $(l).attr("list-cls");
+  console.log('cls = ', cls);
   if ($(".active_filter").length>0){
     $(".active_filter").remove();
   } else {
@@ -143,6 +145,7 @@ const SetFilterProduct = (searchCode) => {
     } else {
       $(".resultProducts div ul li").each((i, el) => {
         cls = $(el).attr("cls");
+        console.log('cls = ', cls);
         if (cls === searchCode) {
           $(el).toggleClass("active_filter_option");
           $(el).toggleClass("active");
@@ -254,11 +257,13 @@ $(document).ready(function(){
   // end -------------
   // products dropdown
   const [ productElement ] = document.getElementsByClassName('ArrowDownMenu');
+  //console.log('productElement = ', productElement);
   let dropdownProductsHTML = '';
    $.ajax({
     type: "GET",
     url: `${window.location.origin}/WebGetFilters.hal`,
     success: (data) => {
+      console.log('success !!! = ', data);
       if (!data) return;
       data = JSON.parse(data);
       if (!data['FilterType'] || !data['FilterType'].length) return;
@@ -438,9 +443,11 @@ $(document).ready(function(){
       strvals.splice(inx,1);
     } else {
       options.push(cls);
+      //console.log('cls = ', cls);
+      //console.log('$(this).html() = ', $(this).html());
       strvals.push($(this).html());
     }
-   
+    //console.log('opt397 = ', opt);
     $(opt).data("filter_options",options);
     $(opt).data("filter_options_str",strvals);
     if (strvals.length>0){
@@ -451,15 +458,19 @@ $(document).ready(function(){
     RefreshFilters();
     
     onFilterClick(); // rebuild pagination after filtrated
+    console.log('filterNames406 =', filterNames);
     if (filterNames.includes($(opt).text().toUpperCase())) {
       $(opt).removeClass('active');
     } else {
+      //console.log('opt = ', opt);
       $(opt).addClass('active');
       $(opt).find("a").append(`<span id=\'span\' class=\'fa fa-times fa-lg\' aria-hidden=\'true\'> </span>`);
       setTimeout(() => {
         $('.filter-buttons li a').each((index) => {
           if ($('.filter-buttons li a')[index].firstElementChild) {
+            console.log(`$('.filter-buttons li a') = `, $('.filter-buttons li a'));
             $('.filter-buttons li a')[index].firstElementChild.addEventListener('click', (e)=> {
+              console.log('fb li a = ', $('.filter-buttons li a')[index]);
               $(opt).data("filter_options", []);
               $(opt).data("filter_options_str",[]);
               $(opt).find("a").html($(opt).data("origstr"));
@@ -488,6 +499,10 @@ $(document).ready(function(){
     pg5 = new Pagination($("#Works-tabContent #works4 > .row"),6);
     pg6 = new Pagination($("#Works-tabContent #works5 > .row"),6);
   }
+ 
+  // setTimeout(() => {
+    // $('.ModalLogin').toggle()
+  // });
 })
 
 function RefreshFilters(){

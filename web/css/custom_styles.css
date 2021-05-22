@@ -154,3 +154,19 @@ ul.ui-autocomplete.ui-menu{
   max-height: 44px;
   overflow: hidden;
 }
+/* gallery img styles */
+.Image-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.Full-screen {
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+  color: white;
+  cursor: pointer;
+  opacity: 0.6;
+}
+/* -------------- */

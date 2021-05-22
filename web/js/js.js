@@ -14,9 +14,13 @@ $(document).ready(function(){
         $('.LoginInner').toggle();
         return false;
     });
+    $('.logoutClass a').click(() => {
+        console.log('logout');
+        window.location = `${window.location.origin}/WebUpdatingAction.hal?action=logout&path=/`;
+    });
     $('#checkoutBtn').click((e) => {
         if (document.getElementById('loggedIn')) {
-            console.log('тут будет халовская функция, которая создаст заказ');
+            window.location = `${window.location.origin}/delivery`;
         } else $('#ModalLogin').modal('show');
     });
     $('#RespBurg').click(function (){
