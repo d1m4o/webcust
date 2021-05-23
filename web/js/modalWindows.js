@@ -10,32 +10,42 @@ const signInModal = `
             </div>
             <div class="modal-body">
                 <h2 class="Title">Sign In</h2>
+                <!--
                 <h5>with</h5>
                 <div class="SocialLogin">
                     <div class="row">
                         <div class="col-xl-6 col-12">
-                            <a href="#" class="btns-blue-dark FB"><svg class="svg-inline--fa fa-facebook-f fa-w-10" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="facebook-f" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg=""><path fill="currentColor" d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path></svg><!-- <i class="fab fa-facebook-f"></i> --> FACEBOOK</a>
+                            <a href="#" class="btns-blue-dark FB"><i class="fab fa-facebook-f"></i> FACEBOOK</a>
                         </div>
                         <div class="col-xl-6 col-12">
-                            <a href="#" class="btns-red GP"><svg class="svg-inline--fa fa-google fa-w-16" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512" data-fa-i2svg=""><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg><!-- <i class="fab fa-google"></i> --> GOOGLE</a>
-                        </div>                                    
+                            <a href="#" class="btns-red GP"><i class="fab fa-google"></i> GOOGLE</a>
+                        </div>                                  
                     </div>
                 </div>
-                <h5>or</h5>
-                <form action="../dologin" method="post">
+                <h5>or</h5> -->
+                <form name='logInForm'>
                     <div class="form-group">
                         <input type="text" style="display:none" name='company' value='3'>
-                        <input type="text" name='login' placeholder="Username">
+                        <input type="text" name='login' placeholder="Username" class="form-control" required>
+                        <div class="invalid-feedback" id='logIn_usernameMessage_req'>
+                            Username is required!
+                        </div>    
                     </div>
                     <div class="form-group">
-                        <input type="password" name='passwd' placeholder="Password">
+                        <input type="password" name='passwd' placeholder="Password" class="form-control" required>
+                        <div class="invalid-feedback" id='logIn_pwMessage_req'>
+                            Password is required!
+                        </div>
+                        <div class="invalid-feedback" id='logIn_pwMessage_incorrect'>
+                            Incorrect username or password!
+                        </div>
                         <input type="text" style="display:none" name='custpage' value=${window.location.pathname}>
                     </div>  
                     <div class="form-group">
                         <label><div class="jq-checkbox"><input type="checkbox"><div class="jq-checkbox__div"></div></div> I agree with terms of use and privacy</label>
                     </div>
                     <div class="form-group">
-                        <input type="submit" class="btns-white-red" value="Login" >
+                        <input id='logInSubmit' style='text-align: center; width: 110px;' class="btns-white-red" value="Login" >
                     </div>   
                     <div class="form-group Last Links">
                         <a href="#" data-toggle="modal" data-dismiss="modal" data-target="#ModalForgot">Forgot password?</a>
@@ -59,34 +69,54 @@ const registrationModal = `
         </div>
         <div class="modal-body">
             <h2 class="Title">Sign Up</h2>
+            <!--
             <h5>with</h5>
             <div class="SocialLogin">
                 <div class="row">
                     <div class="col-xl-6 col-12">
-                        <a href="#" class="btns-blue-dark FB"><svg class="svg-inline--fa fa-facebook-f fa-w-10" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="facebook-f" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg=""><path fill="currentColor" d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path></svg><!-- <i class="fab fa-facebook-f"></i> --> FACEBOOK</a>
+                        <a href="#" class="btns-blue-dark FB"> <i class="fab fa-facebook-f"></i> FACEBOOK</a>
                     </div>
                     <div class="col-xl-6 col-12">
-                        <a href="#" class="btns-red GP"><svg class="svg-inline--fa fa-google fa-w-16" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512" data-fa-i2svg=""><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg><!-- <i class="fab fa-google"></i> --> GOOGLE</a>
+                        <a href="#" class="btns-red GP"> <i class="fab fa-google"></i> GOOGLE</a>
                     </div>                                    
                 </div>
             </div>
-            <h5>or</h5>
-            <form>
+            <h5>or</h5>  -->
+            <form name="signUpForm">
                 <div class="row">
                     <div class="col-xl-6 col-12">
                         <div class="form-group">
-                            <input type="text" placeholder="Username">
+                            <input type="text" style="display:none" name='company' value='3'>
+                            <input type="text" name="Username" class="form-control" placeholder="Username" required>
+                                <div class="invalid-feedback" id='usernameMessage'>
+                                    Username is required!
+                                </div>                        
                         </div>
                         <div class="form-group">
-                            <input type="password" placeholder="Password">
-                        </div>     
+                            <input type="password" name="Password" class="form-control" placeholder="Password" required>
+                            <div class="invalid-feedback" id='passwordMessage'>
+                                Password is required!
+                            </div>  
+                        </div>
                     </div>
                     <div class="col-xl-6 col-12">
                         <div class="form-group">
-                            <input type="text" placeholder="E-mail">
+                            <input name="E-mail" type="text" class="form-control" placeholder="E-mail" required>
+                            <div class="invalid-feedback" id='emailMessage_required'>
+                                E-mail is required!
+                            </div>
+                            <div class="invalid-feedback" id='emailMessage_incorrect'>
+                                Incorrect e-mail!
+                            </div>  
                         </div>
                         <div class="form-group">
-                            <input type="text" placeholder="Confirm password">
+                            <input type="password" name="ConfirmPassword" class="form-control" placeholder="Confirm password" required>
+                            <div class="invalid-feedback" id='confPwMessage_required'>
+                                Confirm password is required!
+                            </div>
+                            <div class="invalid-feedback" id='confPwMessage_pwMismatch'>
+                                Password mismatch!
+                            </div>
                         </div>     
                     </div>                                        
                 </div>
@@ -94,7 +124,7 @@ const registrationModal = `
                     <label><div class="jq-checkbox"><input type="checkbox"><div class="jq-checkbox__div"></div></div> I agree with terms of use and privacy</label>
                 </div>
                 <div class="form-group Last">
-                    <input type="submit" class="btns-white-red" value="Sign up">
+                    <input id='signUpSubmit' style='text-align: center; width: 120px;' class="btns-white-red" value="Sign up">
                 </div>     
             </form>
         </div>
@@ -165,8 +195,8 @@ const thanksModal = `
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="closes" data-dismiss="modal" aria-label="Close">
-                    <svg class="svg-inline--fa fa-times fa-w-10" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg=""><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg><!-- <i class="fal fa-times"></i> -->
+                <button type="button" class="closes" data-dismiss="modal" aria-label="Close" id='closeThanksBtn'>
+                   <i class="fal fa-times"></i> 
                 </button>
             </div>
             <div class="modal-body">
@@ -205,4 +235,161 @@ $(document).ready(() => {
     $('body').append($(changePasswordModal));
     $('body').append($(thanksModal));
     $('body').append($(isChangePassword));
+    $('#signUpSubmit').click(() => {
+        validateSingUp();
+    })
+    $('#logInSubmit').click(() => {
+        validateLogIn();
+    })
+    $('#closeThanksBtn').click(() => {
+        $('#ModalLogin').modal('show');
+    });
 });
+
+const validateSingUp = () => {
+    const username = document.forms["signUpForm"]["Username"].value;
+    const email = document.forms["signUpForm"]["E-mail"].value;
+    const password = document.forms["signUpForm"]["Password"].value;
+    const confirmPw = document.forms["signUpForm"]["ConfirmPassword"].value;
+    // validate 
+    if (!username) {
+        $(document.forms["signUpForm"]["Username"]).addClass('is-invalid');
+    } else $(document.forms["signUpForm"]["Username"]).removeClass('is-invalid');
+
+    if (!email) {
+        $(document.forms["signUpForm"]["E-mail"]).addClass('is-invalid');
+        $('#emailMessage_incorrect').hide();
+        $('#emailMessage_required').show();
+
+    } else {
+        $(document.forms["signUpForm"]["E-mail"]).removeClass('is-invalid');
+        $('#emailMessage_required').hide();
+        $('#emailMessage_incorrect').hide();
+    } 
+
+    if (!password) {
+        $(document.forms["signUpForm"]["Password"]).addClass('is-invalid');
+        $('#passwordMessage').show();
+    } else  {
+        $(document.forms["signUpForm"]["Password"]).removeClass('is-invalid');
+        $('#passwordMessage').hide();
+    }
+    
+    if (!confirmPw) {
+        $(document.forms["signUpForm"]["ConfirmPassword"]).addClass('is-invalid');
+        $('#confPwMessage_pwMismatch').hide();
+        $('#confPwMessage_required').show();
+    } else {
+        $(document.forms["signUpForm"]["ConfirmPassword"]).removeClass('is-invalid');
+        $('#confPwMessage_required').hide();
+        $('#confPwMessage_pwMismatch').hide();
+    }
+
+    if (!username || !email || !password || !confirmPw) return;
+
+    if (password !== confirmPw ) {
+        let hasClass = $(document.forms["signUpForm"]["ConfirmPassword"]).hasClass('is-invalid'); 
+        if (!hasClass) $(document.forms["signUpForm"]["ConfirmPassword"]).addClass('is-invalid');
+        hasClass = $(document.forms["signUpForm"]["Password"]).hasClass('is-invalid');
+        if (!hasClass) $(document.forms["signUpForm"]["Password"]).addClass('is-invalid');
+        //
+        $('#confPwMessage_required').hide();
+        $('#confPwMessage_pwMismatch').show();
+        $('#passwordMessage').hide();
+        return;
+    }
+    const validateEmail = (mail) => {
+        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(mail);
+    }
+    if (!validateEmail(email)) {
+        let hasClass = $(document.forms["signUpForm"]["E-mail"]).hasClass('is-invalid');
+        if (!hasClass) $(document.forms["signUpForm"]["E-mail"]).addClass('is-invalid')
+        $('#emailMessage_incorrect').show();
+        $('#emailMessage_required').hide();
+        return;
+    } else {
+        $(document.forms["signUpForm"]["E-mail"]).removeClass('is-invalid');
+        $('#emailMessage_incorrect').hide();
+        $('#emailMessage_required').hide();
+    }
+    onSubmit_signUp({ username, email, password});
+};
+
+const onSubmit_signUp = (params) => {
+    const { username, email, password} = params;
+        // return console.log('clicked submit');
+    $.ajax({
+        type: "GET",
+        url: `${window.location.origin}/WebHBSStoreCustMM.hal?company=3&E-mail=${email}&Username=${username}&Password=${password}`,
+        success: (data, message, res) => {
+            console.log(1);
+            if (res.status != 200) return;
+            $('#ModalReg').modal('hide');
+            $('#ModalThanks').modal('show');
+            console.log(2);
+        },
+        error: (e) => {
+          console.log('error = ', e);
+        }
+      });
+};
+// action="../dologin" method="post"
+const validateLogIn = () => {
+    const name= document.forms["logInForm"]["login"].value;
+    const password = document.forms["logInForm"]["passwd"].value;
+    if (!name) {
+        let hasClass = $(document.forms["logInForm"]["login"]).hasClass('is-invalid');
+        if (!hasClass) $(document.forms["logInForm"]["login"]).addClass('is-invalid');
+        $('#logIn_usernameMessage_req').show();
+    } else {
+        $(document.forms["logInForm"]["login"]).removeClass('is-invalid');
+        $('#logIn_usernameMessage_req').hide();
+    }
+
+    if (!password) {
+        let hasClass = $(document.forms["logInForm"]["passwd"]).hasClass('is-invalid');
+        if (!hasClass) $(document.forms["logInForm"]["passwd"]).addClass('is-invalid');
+        $('#logIn_pwMessage_incorrect').hide();
+        $('#logIn_pwMessage_req').show();
+    } else {
+        $(document.forms["logInForm"]["passwd"]).removeClass('is-invalid');
+        $('#logIn_pwMessage_incorrect').hide();
+        $('#logIn_pwMessage_req').hide();
+    }
+
+    if (!name || !password) return;
+    onSubmit_logIn({ name, password})
+};
+const onSubmit_logIn = (params) => {
+    const { name, password } = params;
+    console.log('name = ', name);
+    console.log('paw = ', password);
+    // return console.log('onSubmit_logIn');
+    console.log(`${window.location.origin}/dologin?company=3&login='asdasd'&passwd='asdas'`);
+    $.ajax({
+        type: "GET",
+        url: `${window.location.origin}/dologin?company=3&login=${name}&passwd=${password}`,
+        success: (data, message, res) => {
+            if (res.status != 200) return;
+            if (res.responseText == 'Error') {
+                let hasClass = $(document.forms["logInForm"]["passwd"]).hasClass('is-invalid');
+                if (!hasClass) $(document.forms["logInForm"]["passwd"]).addClass('is-invalid');
+
+                hasClass = $(document.forms["logInForm"]["login"]).hasClass('is-invalid');
+                if (!hasClass) $(document.forms["logInForm"]["login"]).addClass('is-invalid');
+                
+                $('#logIn_pwMessage_req').hide();
+                $('#logIn_usernameMessage_req').hide();
+                $('#logIn_pwMessage_incorrect').show();
+            } else if (res.responseText == 'Ok') location.reload();
+            console.log('res.responseText = ', res.responseText);
+            console.log('ERROR!!!!!!ERROR!!!!!!ERROR!!!!!!ERROR!!!!!!ERROR!!!!!!');
+        },
+        error: (e) => {
+          console.log('error = ', e);
+        }
+      });
+    //logIn_pwMessage_incorrect
+    //logIn_pwMessage_req 
+};

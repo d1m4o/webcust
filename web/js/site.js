@@ -1,4 +1,200 @@
+// delivery
+const onDeliveryClick = (deliveryType) => {
+  if (!deliveryType) return;
+  $.ajax({
+    type: "GET",
+    url: `${window.location.origin}/WebDeliveryMode.hal?mode=${deliveryType}`,
+    success: (data, message, res) => {
+      console.log('data = ', data);
+      if (res.status != 200) return;
+      if (res.responseText == 'Error') {
+          console.log('что-то пошло не так!onDeliveryClick')
+          console.log(`${window.location.origin}/WebDeliveryMode.hal?mode=${deliveryType}`);
+      } else if (res.responseText == 'Ok') {
+        // window.location.href = `${window.location.origin}/thanks`
+        console.log(`${window.location.origin}/WebDeliveryMode.hal?mode=${deliveryType}`);
+        console.log('успех onDeliveryClick = ', deliveryType);
+        
+        $.ajax({
+          type: "GET",
+          url: `${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`,
+          success: (data, message, res) => {
+            console.log('data = ', data);
+            if (res.status != 200) return;
+            if (res.responseText == 'Error') {
+                console.log('что-то пошло не так!onDeliveryClick WebFinishOrder')
+                console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
+            } else if (res.responseText == 'Ok') {
+              // window.location.href = `${window.location.origin}/thanks`
+              console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
+              console.log('успех onDeliveryClick WebFinishOrder = ', deliveryType);
+            }
+          },
+          error: (e) => {
+            console.log('error = ', e);
+          }
+        });
+      }
+    },
+    error: (e) => {
+      console.log('error = ', e);
+    }
+  });
+};
+// ---------------------------------------------- end delivery --------------------
+// reqs
+const onRequisitesSaveClick = (personMode) => {
+  if (personMode == 1) { // JUR
+    const sia = $('#reqJur_sia').val();
+    const regNr = $('#reqJur_reqNr').val();
+    const address = $('#reqJur_address').val();
+    const accNumber = $('#reqJur_accNumber').val();
+    const bankCode = $('#reqJur_bankCode').val();
+    const contactPersonSIA = $('#reqJur_contactPersonSIA').val();
+    const source = $('#reqJur_source').val();
+    const phone = $('#reqJur_phone').val();
+    const email = $('#reqJur_email').val();
+    console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
+    jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&
+    jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&
+    jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&
+    jur_phone=${phone}&jur_email=${email}`);
+    $.ajax({
+      type: "GET",
+      url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
+      jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&
+      jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&
+      jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&
+      jur_phone=${phone}&jur_email=${email}`,
+      success: (data, message, res) => {
+        console.log('data = ', data);
+        if (res.status != 200) return;
+        if (res.responseText == 'Error') {
+            console.log('что-то пошло не так!onRequisitesSaveClick 1111111')
+            console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
+            jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&
+            jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&
+            jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&
+            jur_phone=${phone}&jur_email=${email}`);
+        } else if (res.responseText == 'Ok') {
+          // window.location.href = `${window.location.origin}/thanks`
+          console.log('успех onRequisitesSaveClick 11111');
+          console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
+            jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&
+            jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&
+            jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&
+            jur_phone=${phone}&jur_email=${email}`);
+        }
+      },
+      error: (e) => {
+        console.log('error = ', e);
+      }
+    });
 
+
+  } else if(personMode == 2) { // FIZ
+    const sia = $('#reqFiz_sia').val();
+    const accNumber = $('#reqFiz_accNumbe').val();
+    const bankCode = $('#reqFiz_bankCode').val();
+    const phone = $('#reqFiz_phone').val();
+    const email = $('#reqFiz_email').val();
+    console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
+    fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&
+    fiz_phone=${phone}&fiz_email=${email}`);
+    $.ajax({
+      type: "GET",
+      url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
+      fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&
+      fiz_phone=${phone}&fiz_email=${email}`,
+      success: (data, message, res) => {
+        console.log('data = ', data);
+        if (res.status != 200) return;
+        if (res.responseText == 'Error') {
+            console.log('что-то пошло не так!onRequisitesSaveClick 22222');
+            console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
+            fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&
+            fiz_phone=${phone}&fiz_email=${email}`);
+        } else if (res.responseText == 'Ok') {
+          // window.location.href = `${window.location.origin}/thanks`
+          console.log('успех onRequisitesSaveClick 222222');
+          console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
+            fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&
+            fiz_phone=${phone}&fiz_email=${email}`);
+        }
+      },
+      error: (e) => {
+        console.log('error = ', e);
+      }
+    });
+  }
+};
+//
+// profile
+const onCabinetSaveBtnClick = () => {
+  console.log('clicked onCabinetSaveBtnClick');
+  const name = $('#cabinet_firstname').val();
+  const surename = $('#cabinet_secondname').val();
+  const email = $('#cabinet_email').val();
+  const phone = $('#cabinet_phone').val();
+  const newPW = $('#cabinet_newPw').val();
+  const againPw =$('#cabinet_againPw').val();
+  const address = $('#cabinet_address').val();
+
+  
+  if (newPW && newPW !== againPw) {
+    let hasClass = $('#cabinet_newPw').hasClass('is-invalid');
+    if (!hasClass) $('#cabinet_newPw').addClass('is-invalid');
+    hasClass = $('#cabinet_againPw').hasClass('is-invalid');
+    if (!hasClass) $('#cabinet_againPw').addClass('is-invalid');
+    return;
+  } else {
+    $('#cabinet_newPw').removeClass('is-invalid');
+    $('#cabinet_againPw').removeClass('is-invalid');
+  }
+  // if (!email || !address) return;
+
+  const validateEmail = (mail) => {
+    const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(mail);
+  }
+
+
+if (!validateEmail(email)) {
+    let hasClass = $('#cabinet_email').hasClass('is-invalid');
+    if (!hasClass) $('#cabinet_email').addClass('is-invalid');
+    // $('#emailMessage_incorrect').show();
+    return;
+} else {
+    $('#cabinet_email').removeClass('is-invalid');
+    // $('#emailMessage_incorrect').hide();
+}
+
+
+$.ajax({
+  type: "GET",
+  url: `${window.location.origin}/WebUpdateCustomerData.hal?
+    name=${name}&surename=${surename}&email=${email}&phone=${phone}&address=${address}&newPw=${newPW}`,
+  success: (data, message, res) => {
+    console.log('data = ', data);
+    if (res.status != 200) return;
+    if (res.responseText == 'Error') {
+        console.log('что-то пошло не так! profile click save Error');
+        console.log(`${window.location.origin}/WebUpdateCustomerData.hal?name=${name}&
+        surename=${surename}&email=${email}&phone=${phone}&address=${address}&newPw=${newPW}`);
+    } else if (res.responseText == 'Ok') {
+      // window.location.href = `${window.location.origin}/thanks`
+      console.log('Ok');
+      console.log(`${window.location.origin}/WebUpdateCustomerData.hal?name=${name}&
+        surename=${surename}&email=${email}&phone=${phone}&address=${address}&newPw=${newPW}`);
+    }
+  },
+  error: (e) => {
+    console.log('error = ', e);
+  }
+});
+
+};
+// ---------------------------------------------- end profile --------------------
 let filterNames = [];
 let waw = () => 1;
 // product info page
@@ -225,6 +421,10 @@ function ClearContactForm(form){
 
 $(document).ready(function(){
   console.log('ready');
+  // profile 
+  $('#cabinet_saveBtn').click((e) => {
+    onCabinetSaveBtnClick();
+  });
   //paginationProducts start
   $(".filter-buttons li a").each(( index, value ) => {
     filterNames.push(value.innerText.toUpperCase());
@@ -326,18 +526,25 @@ $(document).ready(function(){
       //alert(data);
       //refresh basket
       //location.reload();
-      $(".Cart a").html($(data).find("res").attr("qty"));
+      console.log('509');
+      $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
+      // $(".Cart a").html($(data).find("res").attr("qty"));
     })
   });  
+
   
-  
-  $(".DeliveryWrapp .deliv1").click(function(){
-    
-  
+  $(".DeliveryWrapp .deliv1").click(() => {
+    onDeliveryClick(1);
   });
-  $(".DeliveryWrapp .deliv2").click(function(){
-  
-  
+  $(".DeliveryWrapp .deliv2").click(() => {
+    onDeliveryClick(2);
+  });
+
+  $('#reqFiz_saveBtn').click(() => {
+    onRequisitesSaveClick(2);
+  });
+  $('#reqJur_saveBtn').click(() => {
+    onRequisitesSaveClick(1);
   });
   /*
   $("[data-target='#ModalLogin']").click((e) => {
@@ -375,7 +582,9 @@ $(document).ready(function(){
               //alert(data);
               //refresh basket
               //location.reload();
-              $(".Cart a").html($(data).find("res").attr("qty"));
+              // span 
+              $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
+              // $(".Cart a").html($(data).find("res").attr("qty"));
               $(pop).modal('toggle');
             })
           });
@@ -384,7 +593,8 @@ $(document).ready(function(){
             //alert(data);
             //refresh basket
             //location.reload();
-            $(".Cart a").html($(data).find("res").attr("qty"));
+            $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
+            // $(".Cart a").html($(data).find("res").attr("qty"));
           });
         }
       });

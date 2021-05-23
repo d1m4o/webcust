@@ -67,7 +67,7 @@ $(document).ready(function(){
                 items:3
             }
         }        
-    });     
+    });
     $('#ClientsAboutUsSlider').owlCarousel({
         loop:false,
         nav:true,
@@ -89,7 +89,18 @@ $(document).ready(function(){
                 items:4
             }            
         }        
-    });   
+    });
+    $( '#ProdSlider' ).sliderPro({
+        width: 960,
+        height: 500,
+        arrows: true,
+        buttons: false,
+        waitForLayers: true,
+        fade: true,
+        autoplay: false,
+        autoScaleLayers: false
+    });
+
     $('#ProdListSlide').owlCarousel({
         loop:false,
         nav:true,
