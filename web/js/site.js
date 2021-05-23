@@ -25,7 +25,7 @@ const onDeliveryClick = (deliveryType) => {
                 console.log('что-то пошло не так!onDeliveryClick WebFinishOrder')
                 console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
             } else if (res.responseText == 'Ok') {
-              // window.location.href = `${window.location.origin}/thanks`
+              window.location.href = `${window.location.origin}/veikals/catalog`
               console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
               console.log('успех onDeliveryClick WebFinishOrder = ', deliveryType);
             }
