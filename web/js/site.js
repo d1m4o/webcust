@@ -54,36 +54,20 @@ const onRequisitesSaveClick = (personMode) => {
     const source = $('#reqJur_source').val();
     const phone = $('#reqJur_phone').val();
     const email = $('#reqJur_email').val();
-    console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
-    jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&
-    jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&
-    jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&
-    jur_phone=${phone}&jur_email=${email}`);
+    console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&jur_phone=${phone}&jur_email=${email}`);
     $.ajax({
       type: "GET",
-      url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
-      jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&
-      jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&
-      jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&
-      jur_phone=${phone}&jur_email=${email}`,
+      url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&jur_phone=${phone}&jur_email=${email}`,
       success: (data, message, res) => {
         console.log('data = ', data);
         if (res.status != 200) return;
         if (res.responseText == 'Error') {
             console.log('что-то пошло не так!onRequisitesSaveClick 1111111')
-            console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
-            jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&
-            jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&
-            jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&
-            jur_phone=${phone}&jur_email=${email}`);
+            console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&jur_phone=${phone}&jur_email=${email}`);
         } else if (res.responseText == 'Ok') {
           // window.location.href = `${window.location.origin}/thanks`
           console.log('успех onRequisitesSaveClick 11111');
-          console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
-            jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&
-            jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&
-            jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&
-            jur_phone=${phone}&jur_email=${email}`);
+          console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&jur_phone=${phone}&jur_email=${email}`);
         }
       },
       error: (e) => {
