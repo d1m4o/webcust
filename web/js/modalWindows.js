@@ -107,6 +107,12 @@ const registrationModal = `
                             </div>
                             <div class="invalid-feedback" id='emailMessage_incorrect'>
                                 Incorrect e-mail!
+                            </div>
+                            <div class="invalid-feedback" id='emailMessage_existsEmail'>
+                                User with this e-mail already exists!
+                            </div>  
+                            <div class="invalid-feedback" id='emailMessage_saveError'>
+                                Registration error! Contact the administrator!
                             </div>  
                         </div>
                         <div class="form-group">
@@ -260,11 +266,14 @@ const validateSingUp = () => {
         $(document.forms["signUpForm"]["E-mail"]).addClass('is-invalid');
         $('#emailMessage_incorrect').hide();
         $('#emailMessage_required').show();
-
+        $('#emailMessage_existsEmail').hide();
+        $('#emailMessage_saveError').hide();
     } else {
         $(document.forms["signUpForm"]["E-mail"]).removeClass('is-invalid');
         $('#emailMessage_required').hide();
         $('#emailMessage_incorrect').hide();
+        $('#emailMessage_existsEmail').hide();
+        $('#emailMessage_saveError').hide();
     } 
 
     if (!password) {
@@ -307,11 +316,15 @@ const validateSingUp = () => {
         if (!hasClass) $(document.forms["signUpForm"]["E-mail"]).addClass('is-invalid')
         $('#emailMessage_incorrect').show();
         $('#emailMessage_required').hide();
+        $('#emailMessage_existsEmail').hide();
+        $('#emailMessage_saveError').hide();
         return;
     } else {
         $(document.forms["signUpForm"]["E-mail"]).removeClass('is-invalid');
         $('#emailMessage_incorrect').hide();
         $('#emailMessage_required').hide();
+        $('#emailMessage_existsEmail').hide();
+        $('#emailMessage_saveError').hide();
     }
     onSubmit_signUp({ username, email, password});
 };
@@ -325,8 +338,21 @@ const onSubmit_signUp = (params) => {
         success: (data, message, res) => {
             console.log(1);
             if (res.status != 200) return;
-            $('#ModalReg').modal('hide');
-            $('#ModalThanks').modal('show');
+            if (res.responseText == 'Ok') {
+                $('#ModalReg').modal('hide');
+                $('#ModalThanks').modal('show');
+                return;
+            }  else if (res.responseText == 'EmailExistsError') {
+                $('#emailMessage_required').hide();
+                $('#emailMessage_incorrect').hide();
+                $('#emailMessage_existsEmail').show();
+                $('#emailMessage_saveError').hide();
+            } else if (res.responseText == 'CustomerSaveError') {
+                $('#emailMessage_required').hide();
+                $('#emailMessage_incorrect').hide();
+                $('#emailMessage_existsEmail').hide();
+                $('#emailMessage_saveError').show();
+            }
             console.log(2);
         },
         error: (e) => {

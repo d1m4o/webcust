@@ -54,36 +54,18 @@ const onRequisitesSaveClick = (personMode) => {
     const source = $('#reqJur_source').val();
     const phone = $('#reqJur_phone').val();
     const email = $('#reqJur_email').val();
-    console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
-    jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&
-    jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&
-    jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&
-    jur_phone=${phone}&jur_email=${email}`);
+
     $.ajax({
       type: "GET",
-      url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
-      jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&
-      jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&
-      jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&
-      jur_phone=${phone}&jur_email=${email}`,
+      url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&jur_phone=${phone}&jur_email=${email}`,
       success: (data, message, res) => {
         console.log('data = ', data);
         if (res.status != 200) return;
         if (res.responseText == 'Error') {
             console.log('что-то пошло не так!onRequisitesSaveClick 1111111')
-            console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
-            jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&
-            jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&
-            jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&
-            jur_phone=${phone}&jur_email=${email}`);
         } else if (res.responseText == 'Ok') {
           // window.location.href = `${window.location.origin}/thanks`
           console.log('успех onRequisitesSaveClick 11111');
-          console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
-            jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&
-            jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&
-            jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&
-            jur_phone=${phone}&jur_email=${email}`);
         }
       },
       error: (e) => {
@@ -98,28 +80,18 @@ const onRequisitesSaveClick = (personMode) => {
     const bankCode = $('#reqFiz_bankCode').val();
     const phone = $('#reqFiz_phone').val();
     const email = $('#reqFiz_email').val();
-    console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
-    fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&
-    fiz_phone=${phone}&fiz_email=${email}`);
+    console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&fiz_phone=${phone}&fiz_email=${email}`);
     $.ajax({
       type: "GET",
-      url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
-      fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&
-      fiz_phone=${phone}&fiz_email=${email}`,
+      url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&fiz_phone=${phone}&fiz_email=${email}`,
       success: (data, message, res) => {
         console.log('data = ', data);
         if (res.status != 200) return;
         if (res.responseText == 'Error') {
             console.log('что-то пошло не так!onRequisitesSaveClick 22222');
-            console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
-            fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&
-            fiz_phone=${phone}&fiz_email=${email}`);
         } else if (res.responseText == 'Ok') {
           // window.location.href = `${window.location.origin}/thanks`
           console.log('успех onRequisitesSaveClick 222222');
-          console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&
-            fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&
-            fiz_phone=${phone}&fiz_email=${email}`);
         }
       },
       error: (e) => {
@@ -130,6 +102,29 @@ const onRequisitesSaveClick = (personMode) => {
 };
 //
 // profile
+const getData = () => {
+  $.ajax({
+    type: "GET",
+    url: `${window.location.origin}/WebGetCabinetData.hal`,
+    success: (data, message, res) => {
+      data = JSON.parse(data);
+      console.log('data = ', data);
+      if (res.status != 200) return;
+      if (res.responseText == 'Error') {
+        return console.log('что-то пошло не так! profile getData');
+      }
+      const { name, phone, email, address } = data;
+      if (name) $('#cabinet_firstname').val(name);
+      if (phone) $('#cabinet_phone').val(phone);
+      if (email) $('#cabinet_email').val(email);
+      if (address) $('#cabinet_address').val(address);
+    },
+    error: (e) => {
+      console.log('error = ', e);
+    }
+  });
+};
+
 const onCabinetSaveBtnClick = () => {
   console.log('clicked onCabinetSaveBtnClick');
   const name = $('#cabinet_firstname').val();
@@ -172,20 +167,15 @@ if (!validateEmail(email)) {
 
 $.ajax({
   type: "GET",
-  url: `${window.location.origin}/WebUpdateCustomerData.hal?
-    name=${name}&surename=${surename}&email=${email}&phone=${phone}&address=${address}&newPw=${newPW}`,
+  url: `${window.location.origin}/WebUpdateCustomerData.hal?name=${name}&surename=${surename}&email=${email}&phone=${phone}&address=${address}&newPw=${newPW}`,
   success: (data, message, res) => {
     console.log('data = ', data);
     if (res.status != 200) return;
     if (res.responseText == 'Error') {
         console.log('что-то пошло не так! profile click save Error');
-        console.log(`${window.location.origin}/WebUpdateCustomerData.hal?name=${name}&
-        surename=${surename}&email=${email}&phone=${phone}&address=${address}&newPw=${newPW}`);
     } else if (res.responseText == 'Ok') {
       // window.location.href = `${window.location.origin}/thanks`
       console.log('Ok');
-      console.log(`${window.location.origin}/WebUpdateCustomerData.hal?name=${name}&
-        surename=${surename}&email=${email}&phone=${phone}&address=${address}&newPw=${newPW}`);
     }
   },
   error: (e) => {
@@ -422,6 +412,7 @@ function ClearContactForm(form){
 $(document).ready(function(){
   console.log('ready');
   // profile 
+  if (window.location.pathname == '/cabinet-profile') getData();
   $('#cabinet_saveBtn').click((e) => {
     onCabinetSaveBtnClick();
   });
@@ -577,12 +568,14 @@ $(document).ready(function(){
           $(".ModProdLi .btns-white-red").click(function(){
             var pop = $(this).closest("#ModalAddCart");
             var form = $(this).closest("form").get(0);
+            console.log('form = ', form);
             //consol.elog(form);
             $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.qty.value + "&item=" + form.item.value,function(data){
               //alert(data);
               //refresh basket
               //location.reload();
               // span 
+              console.log('$(data).find("res").attr("qty") = ', $(data).find("res").attr("qty"));
               $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
               // $(".Cart a").html($(data).find("res").attr("qty"));
               $(pop).modal('toggle');
@@ -593,6 +586,7 @@ $(document).ready(function(){
             //alert(data);
             //refresh basket
             //location.reload();
+            console.log('$(data).find("res").attr("qty") = ', $(data).find("res").attr("qty"));
             $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
             // $(".Cart a").html($(data).find("res").attr("qty"));
           });
