@@ -25,7 +25,7 @@ const onDeliveryClick = (deliveryType) => {
                 console.log('что-то пошло не так!onDeliveryClick WebFinishOrder')
                 console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
             } else if (res.responseText == 'Ok') {
-              // window.location.href = `${window.location.origin}/thanks`
+              window.location.href = `${window.location.origin}/veikals/catalog`
               console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
               console.log('успех onDeliveryClick WebFinishOrder = ', deliveryType);
             }
@@ -54,7 +54,7 @@ const onRequisitesSaveClick = (personMode) => {
     const source = $('#reqJur_source').val();
     const phone = $('#reqJur_phone').val();
     const email = $('#reqJur_email').val();
-
+    console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&jur_phone=${phone}&jur_email=${email}`);
     $.ajax({
       type: "GET",
       url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&jur_phone=${phone}&jur_email=${email}`,
@@ -63,9 +63,11 @@ const onRequisitesSaveClick = (personMode) => {
         if (res.status != 200) return;
         if (res.responseText == 'Error') {
             console.log('что-то пошло не так!onRequisitesSaveClick 1111111')
+            console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&jur_phone=${phone}&jur_email=${email}`);
         } else if (res.responseText == 'Ok') {
           // window.location.href = `${window.location.origin}/thanks`
           console.log('успех onRequisitesSaveClick 11111');
+          console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&jur_phone=${phone}&jur_email=${email}`);
         }
       },
       error: (e) => {
