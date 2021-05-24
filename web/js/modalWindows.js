@@ -338,20 +338,24 @@ const onSubmit_signUp = (params) => {
         success: (data, message, res) => {
             console.log(1);
             if (res.status != 200) return;
-            if (res.responseText == 'Ok') {
-                $('#ModalReg').modal('hide');
-                $('#ModalThanks').modal('show');
-                return;
-            }  else if (res.responseText == 'EmailExistsError') {
+            console.log('res.responseText = ', res.responseText);
+           if (res.responseText == 'EmailExistsError') {
+                let hasClass = $(document.forms["signUpForm"]["E-mail"]).hasClass('is-invalid');
+                if (!hasClass) $(document.forms["signUpForm"]["E-mail"]).addClass('is-invalid')
                 $('#emailMessage_required').hide();
                 $('#emailMessage_incorrect').hide();
                 $('#emailMessage_existsEmail').show();
                 $('#emailMessage_saveError').hide();
             } else if (res.responseText == 'CustomerSaveError') {
+                let hasClass = $(document.forms["signUpForm"]["E-mail"]).hasClass('is-invalid');
+                if (!hasClass) $(document.forms["signUpForm"]["E-mail"]).addClass('is-invalid')
                 $('#emailMessage_required').hide();
                 $('#emailMessage_incorrect').hide();
                 $('#emailMessage_existsEmail').hide();
                 $('#emailMessage_saveError').show();
+            } else {
+                $('#ModalReg').modal('hide');
+                $('#ModalThanks').modal('show');
             }
             console.log(2);
         },
