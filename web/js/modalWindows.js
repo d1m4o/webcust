@@ -23,13 +23,19 @@ const signInModal = `
                     </div>
                 </div>
                 <h5>or</h5> -->
-                <form name='logInForm'>
+                <!-- action="../dologin" -->
+                <form name='logInForm' id='loginForm'>
                     <div class="form-group">
-                        <input type="text" style="display:none" name='company' value='3'>
-                        <input type="text" name='login' placeholder="Username" class="form-control" required>
+                        <input type="hidden" id="cooksess" name="cooksess" value="true">
+                        <input type="hidden" id="failed" name="failed" value="WebUpdatingAction.hal?action=afterlogin&amp;failed=1">
+                        <input type="hidden" id="custpage" name="custpage" value="WebUpdatingAction.hal?action=afterlogin&amp;cust=1">
+                        <input type="hidden" id="userpage" name="userpage" value="WebUpdatingAction.hal?action=afterlogin&amp;user=1">
+                        
+                        <input type="hidden" style="display:none" name='company' value='3'>
+                        <input type="text" name='login' placeholder="E-mail" class="form-control" required>
                         <div class="invalid-feedback" id='logIn_usernameMessage_req'>
                             Username is required!
-                        </div>    
+                        </div>
                     </div>
                     <div class="form-group">
                         <input type="password" name='passwd' placeholder="Password" class="form-control" required>
@@ -39,13 +45,13 @@ const signInModal = `
                         <div class="invalid-feedback" id='logIn_pwMessage_incorrect'>
                             Incorrect username or password!
                         </div>
-                        <input type="text" style="display:none" name='custpage' value=${window.location.pathname}>
+                         <input type="text" style="display:none" name='custpage' value=${window.location.pathname}>
                     </div>  
                     <div class="form-group">
                         <label><div class="jq-checkbox"><input type="checkbox"><div class="jq-checkbox__div"></div></div> I agree with terms of use and privacy</label>
                     </div>
                     <div class="form-group">
-                        <input id='logInSubmit' style='text-align: center; width: 110px;' class="btns-white-red" value="Login" >
+                        <input id='signInBtn' style='text-align: center; width: 110px;' class="btns-white-red" value="Login" >
                     </div>   
                     <div class="form-group Last Links">
                         <a href="#" data-toggle="modal" data-dismiss="modal" data-target="#ModalForgot">Forgot password?</a>
@@ -244,9 +250,14 @@ $(document).ready(() => {
     $('#signUpSubmit').click(() => {
         validateSingUp();
     })
-    $('#logInSubmit').click(() => {
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+        console.log('e = ', e); 
+    });
+    
+    $('#signInBtn').click(() => {
+        console.log('ckickeed');
         validateLogIn();
-    })
+    });
     $('#closeThanksBtn').click(() => {
         $('#ModalLogin').modal('show');
     });
@@ -353,7 +364,12 @@ const onSubmit_signUp = (params) => {
                 $('#emailMessage_incorrect').hide();
                 $('#emailMessage_existsEmail').hide();
                 $('#emailMessage_saveError').show();
-            } else {
+            } else if (res.responseText == 'Ok') {
+                $('#emailMessage_required').hide();
+                $('#emailMessage_incorrect').hide();
+                $('#emailMessage_existsEmail').hide();
+                $('#emailMessage_saveError').hide();
+                
                 $('#ModalReg').modal('hide');
                 $('#ModalThanks').modal('show');
             }
@@ -365,7 +381,7 @@ const onSubmit_signUp = (params) => {
       });
 };
 // action="../dologin" method="post"
-const validateLogIn = () => {
+const validateLogIn = (e) => {
     const name= document.forms["logInForm"]["login"].value;
     const password = document.forms["logInForm"]["passwd"].value;
     if (!name) {
@@ -393,15 +409,17 @@ const validateLogIn = () => {
 };
 const onSubmit_logIn = (params) => {
     const { name, password } = params;
-    console.log('name = ', name);
-    console.log('paw = ', password);
+    const cooksess = document.forms["logInForm"]["cooksess"].value;
+    const custpage = document.forms["logInForm"]["custpage"].value;
+    const userpage = document.forms["logInForm"]["userpage"].value;
     // return console.log('onSubmit_logIn');
     console.log(`${window.location.origin}/dologin?company=3&login='asdasd'&passwd='asdas'`);
     $.ajax({
-        type: "GET",
-        url: `${window.location.origin}/dologin?company=3&login=${name}&passwd=${password}`,
+        type: "POST",
+        url: `${window.location.origin}/dologin?cooksess=${cooksess}&custpage=${custpage}&userpage=${userpage}&company=3&login=${name}&passwd=${password}`,
         success: (data, message, res) => {
             if (res.status != 200) return;
+            console.log('res.responseText = ', res.responseText);
             if (res.responseText == 'Error') {
                 let hasClass = $(document.forms["logInForm"]["passwd"]).hasClass('is-invalid');
                 if (!hasClass) $(document.forms["logInForm"]["passwd"]).addClass('is-invalid');
@@ -413,7 +431,7 @@ const onSubmit_logIn = (params) => {
                 $('#logIn_usernameMessage_req').hide();
                 $('#logIn_pwMessage_incorrect').show();
             } else if (res.responseText == 'Ok') location.reload();
-            console.log('res.responseText = ', res.responseText);
+            
             console.log('ERROR!!!!!!ERROR!!!!!!ERROR!!!!!!ERROR!!!!!!ERROR!!!!!!');
         },
         error: (e) => {
