@@ -169,4 +169,7 @@ ul.ui-autocomplete.ui-menu{
   cursor: pointer;
   opacity: 0.6;
 }
+.ModalWork .modal-content .ModalArr {
+  cursor: pointer;
+}
 /* -------------- */

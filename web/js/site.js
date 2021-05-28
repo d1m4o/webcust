@@ -1,3 +1,50 @@
+// galery 
+const galerySlider = () => {
+  // if (window.location.pathname != '/musu-darbi') return;
+  if (window.location.pathname != '/' && window.location.pathname != '/musu-darbi') return;
+  console.log('galerySlider !');
+  const tabModals = {};
+  $('.Tab-panel-works').each((index, element) => {
+    let id = $(element).attr('id');
+    tabModals[id]= [];
+    $(element).find('span').each((i, el) => {
+      let modalName = $(el).attr('data-target');
+      tabModals[id].push(modalName);
+    });
+  });
+
+  $('.ModalArrowNext').click((e) => {
+    const currentModalId = $(e.target).closest('.ModalWork').attr('id');
+    const currentTabId = $(`[data-target='#${currentModalId}']`).closest('.Tab-panel-works').attr('id');
+    if (tabModals[currentTabId] && tabModals[currentTabId].includes(`#${currentModalId}`)) {
+      let next;
+      for (let i in tabModals[currentTabId]) {
+        if (tabModals[currentTabId][i] != `#${currentModalId}`) continue;
+        if (i < (tabModals[currentTabId].length - 1)) {
+          next = parseInt(i, 10) + 1;
+        } else next = 0;
+      }
+      $(e.target).closest('.ModalWork').modal('hide');
+      $(`${tabModals[currentTabId][next]}`).modal('show');
+    }
+  });
+
+  $('.ModalArrowPrev').click((e) => {
+    const currentModalId = $(e.target).closest('.ModalWork').attr('id');
+    const currentTabId = $(`[data-target='#${currentModalId}']`).closest('.Tab-panel-works').attr('id');
+    if (tabModals[currentTabId] && tabModals[currentTabId].includes(`#${currentModalId}`)) {
+      let prev;
+      for (let i in tabModals[currentTabId]) {
+        if (tabModals[currentTabId][i] != `#${currentModalId}`) continue;
+        if (i > 0) {
+          prev = parseInt(i, 10) - 1;
+        } else prev = (tabModals[currentTabId].length - 1);
+      }
+      $(e.target).closest('.ModalWork').modal('hide');
+      $(`${tabModals[currentTabId][prev]}`).modal('show');
+    }
+  });
+}
 // delivery
 const onDeliveryClick = (deliveryType) => {
   if (!deliveryType) return;
@@ -8,8 +55,8 @@ const onDeliveryClick = (deliveryType) => {
       console.log('data = ', data);
       if (res.status != 200) return;
       if (res.responseText == 'Error') {
-          console.log('что-то пошло не так!onDeliveryClick')
-          console.log(`${window.location.origin}/WebDeliveryMode.hal?mode=${deliveryType}`);
+        console.log('что-то пошло не так!onDeliveryClick')
+        console.log(`${window.location.origin}/WebDeliveryMode.hal?mode=${deliveryType}`);
       } else if (res.responseText == 'Ok') {
         // window.location.href = `${window.location.origin}/thanks`
         console.log(`${window.location.origin}/WebDeliveryMode.hal?mode=${deliveryType}`);
@@ -22,8 +69,8 @@ const onDeliveryClick = (deliveryType) => {
             console.log('data = ', data);
             if (res.status != 200) return;
             if (res.responseText == 'Error') {
-                console.log('что-то пошло не так!onDeliveryClick WebFinishOrder')
-                console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
+              console.log('что-то пошло не так!onDeliveryClick WebFinishOrder')
+              console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
             } else if (res.responseText == 'Ok') {
               // window.location.href = `${window.location.origin}/thanks`
               console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
@@ -411,6 +458,7 @@ function ClearContactForm(form){
 
 $(document).ready(function(){
   console.log('ready');
+  galerySlider();
   // profile 
   if (window.location.pathname == '/cabinet-profile') getData();
   $('#cabinet_saveBtn').click((e) => {
@@ -454,7 +502,7 @@ $(document).ready(function(){
     type: "GET",
     url: `${window.location.origin}/WebGetFilters.hal`,
     success: (data) => {
-      console.log('success !!! = ', data);
+      // console.log('success !!! = ', data);
       if (!data) return;
       data = JSON.parse(data);
       if (!data['FilterType'] || !data['FilterType'].length) return;

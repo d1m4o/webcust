@@ -23,7 +23,7 @@ const signInModal = `
                     </div>
                 </div>
                 <h5>or</h5> -->
-                <!-- action="../dologin" -->
+
                 <form name='logInForm' id='loginForm'>
                     <div class="form-group">
                         <input type="hidden" id="cooksess" name="cooksess" value="true">
@@ -58,6 +58,7 @@ const signInModal = `
                         <a href="#" data-toggle="modal" data-dismiss="modal" data-target="#ModalReg" onclick="console.log('not a member!')">Not a member?</a>
                     </div>                                     
                 </form>
+                
             </div>
         </div>
     </div>
