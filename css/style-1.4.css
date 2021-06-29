@@ -1,0 +1,22 @@
+
+tr.ProdOrderTable
+{
+   height: 35px;
+}
+
+td.ProdOrderTable
+{
+   border-style: solid;
+   text-align: center;
+   font-size: 120%;
+}
+
+td.ProdOrderTable2
+{
+   border-style: solid;
+   text-align: left;
+   font-size: 120%;
+   padding-left: 5px;
+   padding-right: 5px;
+}
+

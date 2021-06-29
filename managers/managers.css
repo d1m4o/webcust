@@ -64,7 +64,7 @@ body{
   width:80px !important;
 }
 .line .sernr{
-  width:80px !important;
+  width:60px !important;
 }
 .tick_mark{
   width:20px;
@@ -614,20 +614,34 @@ div.clear{
 .print_order_doc.invoices{
   text-decoration:none;
 }
+.list_comment{
+  margin:10px 0px;
+}
 .print_order_doc.invoices .link{
   text-decoration:underline;
 }
 .line .invoiced{
   width:200px !important;
 }
+.line .invoicesum{
+  width:70px !important;
+  text-align:right;
+}
 .line .emailsent{
+  width:25px !important;
+  padding-right: 0px !important;
+}
+.line .currency{
   width:50px !important;
+}
+.line .ordernr{
+  width:80px !important;
 }
 .line .duedays{
   width:50px !important;
 }
 .line .emailstat{
-  width:320px !important;
+  width:270px !important;
 }
 .editfield textarea{
   width:100%;
@@ -686,7 +700,7 @@ div.clear{
   width:100%;
 }
 .line .closed {
-    width: 40px !important;
+    width: 30px !important;
 }
 .window_type0 .window_title,.window_type6 .window_title{
   min-height:18px;

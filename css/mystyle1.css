@@ -1,0 +1,113 @@
+
+div.loginheader
+{
+   position: fixed;
+   top: 150px;
+   left: 510px;
+   font-size: 180%;
+}
+
+.emptydiv
+{
+   margin: 0 auto;
+   height: 30px;
+   width: 1400px;
+   border-top: 2px solid lightblue;
+}
+
+#prodordsertable tr th
+{
+   background-color:lightblue;
+   line-height: 200%;
+   font-size: 140%;
+}
+
+#prodordsertable input
+{
+   font-size: 120%;;
+}
+
+#toptable tr th
+{
+   background-color:lightblue;
+   font-size: 140%;
+}
+
+#locationtable th
+{
+   background-color:lightblue;
+   line-height: 200%;
+   font-size: 140%;
+}
+
+#locationtable td
+{
+   line-height: 160%;
+   font-size: 140%;
+}
+
+#locationtable input
+{
+   font-size: 120%;;
+}
+
+#itemtable th
+{
+   background-color:lightblue;
+   line-height: 200%;
+   font-size: 140%;
+}
+
+#itemtable td
+{
+   line-height: 160%;
+   font-size: 140%;
+}
+
+#itemtable input
+{
+   font-size: 120%;;
+}
+
+.doItemUpdate
+{
+   background-color:LightGoldenRodYellow;
+}
+
+.doUpdate
+{
+   background-color:LightGoldenRodYellow;
+}
+
+.MovQty
+{
+   background-color:LightGoldenRodYellow;
+}
+
+.radiobtn
+ {
+    height: 30px;
+    width: 30px;
+    background-color: #eee;
+    border-radius: 50%;
+ }
+ 
+.RequestButton {
+  background-color: lightblue; 
+  color: black; 
+  border: 2px solid #008CBA;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+.RequestButton:hover {
+  background-color: #008CBA;
+  color: white;
+}
