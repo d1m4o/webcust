@@ -1,6 +1,7 @@
 //Google MAP
-
+// this code is not used
 function initMap() {
+    return;
     var element = document.getElementById('map');
     var option = {
         zoom: 15,

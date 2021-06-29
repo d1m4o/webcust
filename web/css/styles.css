@@ -1,3 +1,4 @@
+/*
 @font-face {
   font-family: 'Roboto';
   src: url("../fonts/Roboto-Italic.eot");
@@ -52,6 +53,7 @@
   src: url("../fonts/opensans-extrabold-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/opensans-extrabold-webfont.woff") format("woff"), url("../fonts/opensans-extrabold-webfont.ttf") format("truetype"), url("../fonts/opensans-extrabold-webfont.svg#opensansextrabold") format("svg");
   font-weight: 800;
   font-style: normal; }
+  */
 a, .btns-blue-dark, .btns-blue, .btns-red, .btns-white, .btns-white-blue, .btns-white-red, .ProductList .filter ul li a {
   -webkit-transition: 0.5s;
   -moz-transition: 0.5s;

@@ -23,7 +23,7 @@ const signInModal = `
                     </div>
                 </div>
                 <h5>or</h5> -->
-
+                <!-- action="../dologin" -->
                 <form name='logInForm' id='loginForm'>
                     <div class="form-group">
                         <input type="hidden" id="cooksess" name="cooksess" value="true">
@@ -45,7 +45,6 @@ const signInModal = `
                         <div class="invalid-feedback" id='logIn_pwMessage_incorrect'>
                             Incorrect username or password!
                         </div>
-                         <input type="text" style="display:none" name='custpage' value=${window.location.pathname}>
                     </div>  
                     <div class="form-group">
                         <label><div class="jq-checkbox"><input type="checkbox"><div class="jq-checkbox__div"></div></div> I agree with terms of use and privacy</label>
@@ -58,7 +57,6 @@ const signInModal = `
                         <a href="#" data-toggle="modal" data-dismiss="modal" data-target="#ModalReg" onclick="console.log('not a member!')">Not a member?</a>
                     </div>                                     
                 </form>
-                
             </div>
         </div>
     </div>
@@ -242,12 +240,18 @@ const isChangePassword = `
 `;
 
 $(document).ready(() => {
-    $('body').append($(signInModal));
-    $('body').append($(registrationModal));
-    $('body').append($(forgotModal));
-    $('body').append($(changePasswordModal));
-    $('body').append($(thanksModal));
-    $('body').append($(isChangePassword));
+    // $('body').append($(signInModal));
+    // $('body').append($(registrationModal));
+    // $('body').append($(forgotModal));
+    // $('body').append($(changePasswordModal));
+    // $('body').append($(thanksModal));
+    // $('body').append($(isChangePassword));
+    const search = window.location.search;
+    if (search.indexOf('ConfirmRegistration') != -1) {
+        // $('#ModalChangePass').modal('show');
+        $('#ModalSetPass').modal('show');
+    }
+
     $('#signUpSubmit').click(() => {
         validateSingUp();
     })
@@ -260,20 +264,86 @@ $(document).ready(() => {
         validateLogIn();
     });
     $('#closeThanksBtn').click(() => {
-        $('#ModalLogin').modal('show');
+        // $('#ModalLogin').modal('show');
+    });
+    
+    $('#agreeCheckbox').click((e) => {
+        const checked = !e.target.checked;
+    });
+
+    $('#setPwBtn').click((e) => {
+        onSetPwClick();
+        
+    });
+
+    $('#resetPwBtn').click((e) => {
+        forgotFunc();
+    });
+
+    $('#okPwOnEmailBtn').click((e) => {
+        $('#ModalPwOnEmail').modal('hide');
+    });
+    
+    $('#changePwBtn').click((e) => {
+        onChangePwClick();
     });
 });
+
+const onChangePwClick = () => {
+    const pw1 = $('#pw001').val();
+    const pw2 = $('#pw002').val();
+    if (pw1 != pw2) {
+        $('#pw_mismatch_change').show();
+        return;
+    } else $('#pw_mismatch_change').hide();
+
+    $.ajax({
+        type: "POST",
+        url: `${window.location.origin}/WebChangePassword.hal?company=3&NewPassword=${pw1}&RepeatNewPassword=${pw2}`,
+        success: (data, message, res) => {
+            if (res.status != 200) return;
+            console.log('Changed!');
+            console.log('res.responseText = ', res.responseText);
+            if (res.responseText == 'Ok') {
+                $('#ModalChangePass').modal('hide');
+            } else {
+                console.log('changePass Error');
+            }
+        },
+        error: (e) => {
+          console.log('error = ', e);
+        }
+    });
+};
+
+const forgotFunc = () => {
+    const email = $('#emailForgot').val();
+    console.log('email = ', email);
+    $.ajax({
+        type: "POST",
+        url: `${window.location.origin}/WebRestorePasswordEmail.hal?company=3&eMail=${email}`,
+        success: (data, message, res) => {
+            if (res.status != 200) return;
+            console.log('success');
+            $('#ModalForgot').modal('hide');
+            $('#ModalPwOnEmail').modal('show');
+        },
+        error: (e) => {
+          console.log('error = ', e);
+        }
+    });
+};
 
 const validateSingUp = () => {
     const username = document.forms["signUpForm"]["Username"].value;
     const email = document.forms["signUpForm"]["E-mail"].value;
-    const password = document.forms["signUpForm"]["Password"].value;
-    const confirmPw = document.forms["signUpForm"]["ConfirmPassword"].value;
+    // const password = document.forms["signUpForm"]["Password"].value;
+    // const confirmPw = document.forms["signUpForm"]["ConfirmPassword"].value;
     // validate 
     if (!username) {
         $(document.forms["signUpForm"]["Username"]).addClass('is-invalid');
     } else $(document.forms["signUpForm"]["Username"]).removeClass('is-invalid');
-
+    
     if (!email) {
         $(document.forms["signUpForm"]["E-mail"]).addClass('is-invalid');
         $('#emailMessage_incorrect').hide();
@@ -287,7 +357,7 @@ const validateSingUp = () => {
         $('#emailMessage_existsEmail').hide();
         $('#emailMessage_saveError').hide();
     } 
-
+/*
     if (!password) {
         $(document.forms["signUpForm"]["Password"]).addClass('is-invalid');
         $('#passwordMessage').show();
@@ -305,9 +375,9 @@ const validateSingUp = () => {
         $('#confPwMessage_required').hide();
         $('#confPwMessage_pwMismatch').hide();
     }
-
-    if (!username || !email || !password || !confirmPw) return;
-
+*/
+    if (!username || !email /* || !password || !confirmPw*/) return;
+    /*
     if (password !== confirmPw ) {
         let hasClass = $(document.forms["signUpForm"]["ConfirmPassword"]).hasClass('is-invalid'); 
         if (!hasClass) $(document.forms["signUpForm"]["ConfirmPassword"]).addClass('is-invalid');
@@ -318,7 +388,7 @@ const validateSingUp = () => {
         $('#confPwMessage_pwMismatch').show();
         $('#passwordMessage').hide();
         return;
-    }
+    }*/
     const validateEmail = (mail) => {
         const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(mail);
@@ -338,20 +408,100 @@ const validateSingUp = () => {
         $('#emailMessage_existsEmail').hide();
         $('#emailMessage_saveError').hide();
     }
-    onSubmit_signUp({ username, email, password});
-};
 
-const onSubmit_signUp = (params) => {
-    const { username, email, password} = params;
-        // return console.log('clicked submit');
+    const isAgreeReg = document.getElementById('regCheckbox').checked;
+    if (!isAgreeReg) return;
+
+    registrationFunc({ username, email });
+};
+const registrationFunc = (params) => {
+    const { username, email } = params;
+
     $.ajax({
         type: "GET",
-        url: `${window.location.origin}/WebHBSStoreCustMM.hal?company=3&E-mail=${email}&Username=${username}&Password=${password}`,
+        url: `${window.location.origin}/WebHBSRegistrationCustMM.hal?company=3&E-mail=${email}&Username=${username}`, // &Password=${password}
         success: (data, message, res) => {
             console.log(1);
             if (res.status != 200) return;
             console.log('res.responseText = ', res.responseText);
-           if (res.responseText == 'EmailExistsError') {
+            if (res.responseText == 'EmailExistError') {
+                let hasClass = $(document.forms["signUpForm"]["E-mail"]).hasClass('is-invalid');
+                if (!hasClass) $(document.forms["signUpForm"]["E-mail"]).addClass('is-invalid')
+                $('#emailMessage_required').hide();
+                $('#emailMessage_incorrect').hide();
+                $('#emailMessage_existsEmail').show();
+                $('#emailMessage_saveError').hide();
+            } else if (res.responseText == 'CustomerSaveError' || res.responseText =='EmptyLinkError' || res.responseText == 'MailStoreError') {
+                let hasClass = $(document.forms["signUpForm"]["E-mail"]).hasClass('is-invalid');
+                if (!hasClass) $(document.forms["signUpForm"]["E-mail"]).addClass('is-invalid');
+                $('#emailMessage_required').hide();
+                $('#emailMessage_incorrect').hide();
+                $('#emailMessage_existsEmail').hide();
+                $('#emailMessage_saveError').show();
+            } else if (res.responseText == 'Ok') {
+                $('#emailMessage_required').hide();
+                $('#emailMessage_incorrect').hide();
+                $('#emailMessage_existsEmail').hide();
+                $('#emailMessage_saveError').hide();
+                
+                $('#ModalReg').modal('hide');
+                $('#ModalThanks').modal('show');
+                console.log('REGISTERED');
+            }
+            console.log(2);
+        },
+        error: (e) => {
+            console.log('error = ', e);
+        }
+    });
+};
+const onSetPwClick = () => {
+    const search = window.location.search;
+    let searchArray = search.split('&');
+
+    const username = searchArray[1].split('=')[1];
+    const email = searchArray[2].split('=')[1];
+    const token = searchArray[3].split('=')[1];
+    const pw1 = $('#pw01').val();
+    const pw2 = $('#pw02').val();
+   
+    if(pw1 != pw2) {
+        $('#pw_mismatch').show();
+        return;
+    }else $('#pw_mismatch').hide();
+
+    const cooksess = document.forms["logInForm"]["cooksess"].value;
+    const custpage = '';
+    const userpage = document.forms["logInForm"]["userpage"].value;
+   
+    $.ajax({
+        type: "GET",
+        url: `${window.location.origin}/WebHBSStoreCustMM.hal?company=3&E-mail=${email}&Username=${username}&token=${token}&Password=${pw1}`,
+        success: (data, message, res) => {
+            console.log(1);
+            if (res.status != 200) return;
+            console.log('res.responseText = ', res.responseText);
+            if (res.responseText == 'Ok') {
+                const cooksess = document.forms["logInForm"]["cooksess"].value;
+                const custpage = '';
+                const userpage = document.forms["logInForm"]["userpage"].value;
+                
+                $.ajax({
+                    type: "POST",
+                    url: `${window.location.origin}/dologin?cooksess=${cooksess}&custpage=${custpage}&userpage=${userpage}&company=3&login=${email}&passwd=${pw1}`,
+                    success: (data, message, res) => {
+                        if (res.status != 200) return;
+                        window.location.search = 'Ok';
+                    },
+                    error: (e) => {
+                      console.log('error = ', e);
+                    }
+                });
+            } else if (res.responseText == 'EmailExistsError') {
+                alert('EmailExistsError');
+            }
+
+            /* if (res.responseText == 'EmailExistsError') {
                 let hasClass = $(document.forms["signUpForm"]["E-mail"]).hasClass('is-invalid');
                 if (!hasClass) $(document.forms["signUpForm"]["E-mail"]).addClass('is-invalid')
                 $('#emailMessage_required').hide();
@@ -373,7 +523,7 @@ const onSubmit_signUp = (params) => {
                 
                 $('#ModalReg').modal('hide');
                 $('#ModalThanks').modal('show');
-            }
+            }*/
             console.log(2);
         },
         error: (e) => {
@@ -381,6 +531,7 @@ const onSubmit_signUp = (params) => {
         }
       });
 };
+
 // action="../dologin" method="post"
 const validateLogIn = (e) => {
     const name= document.forms["logInForm"]["login"].value;
@@ -404,17 +555,15 @@ const validateLogIn = (e) => {
         $('#logIn_pwMessage_incorrect').hide();
         $('#logIn_pwMessage_req').hide();
     }
-
-    if (!name || !password) return;
+    const isAgree = document.getElementById('agreeCheckbox').checked;
+    if (!name || !password || !isAgree) return;
     onSubmit_logIn({ name, password})
 };
 const onSubmit_logIn = (params) => {
     const { name, password } = params;
     const cooksess = document.forms["logInForm"]["cooksess"].value;
-    const custpage = document.forms["logInForm"]["custpage"].value;
+    const custpage = '';
     const userpage = document.forms["logInForm"]["userpage"].value;
-    // return console.log('onSubmit_logIn');
-    console.log(`${window.location.origin}/dologin?company=3&login='asdasd'&passwd='asdas'`);
     $.ajax({
         type: "POST",
         url: `${window.location.origin}/dologin?cooksess=${cooksess}&custpage=${custpage}&userpage=${userpage}&company=3&login=${name}&passwd=${password}`,
@@ -424,7 +573,7 @@ const onSubmit_logIn = (params) => {
             if (res.responseText == 'Error') {
                 let hasClass = $(document.forms["logInForm"]["passwd"]).hasClass('is-invalid');
                 if (!hasClass) $(document.forms["logInForm"]["passwd"]).addClass('is-invalid');
-
+                
                 hasClass = $(document.forms["logInForm"]["login"]).hasClass('is-invalid');
                 if (!hasClass) $(document.forms["logInForm"]["login"]).addClass('is-invalid');
                 
@@ -432,13 +581,9 @@ const onSubmit_logIn = (params) => {
                 $('#logIn_usernameMessage_req').hide();
                 $('#logIn_pwMessage_incorrect').show();
             } else if (res.responseText == 'Ok') location.reload();
-            
-            console.log('ERROR!!!!!!ERROR!!!!!!ERROR!!!!!!ERROR!!!!!!ERROR!!!!!!');
         },
         error: (e) => {
           console.log('error = ', e);
         }
       });
-    //logIn_pwMessage_incorrect
-    //logIn_pwMessage_req 
 };

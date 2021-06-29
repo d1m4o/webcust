@@ -72,7 +72,8 @@ const onDeliveryClick = (deliveryType) => {
               console.log('что-то пошло не так!onDeliveryClick WebFinishOrder')
               console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
             } else if (res.responseText == 'Ok') {
-              // window.location.href = `${window.location.origin}/thanks`
+              // window.location.href = `${window.location.origin}/orders`;
+              window.location.href = `${window.location.origin}/thanks`;
               console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
               console.log('успех onDeliveryClick WebFinishOrder = ', deliveryType);
             }
@@ -101,6 +102,18 @@ const onRequisitesSaveClick = (personMode) => {
     const source = $('#reqJur_source').val();
     const phone = $('#reqJur_phone').val();
     const email = $('#reqJur_email').val();
+
+    //
+    console.log('checkboxVal = ', document.getElementById("JurCheck").customChecked);
+    const isJur = document.getElementById("JurCheck").customChecked;
+    if (isJur) {
+      // $("#JurCheck").prop("checked", true);
+      $('#JurCheck-styler').addClass('disabled');
+      $("#JurCheck").prop('disabled', true);
+      $('input[type=checkbox]').trigger('refresh');
+      $("#JurCheck").prop("onclick", null).off("click");
+    }
+    //
 
     $.ajax({
       type: "GET",
@@ -236,6 +249,13 @@ let filterNames = [];
 let waw = () => 1;
 // product info page
 const productInfoPriceGenerate = (productCode) => {
+  /* $("select[name='color']").styler({
+    selectSearch: true
+  }); 
+  $("select[name='type']").styler({
+    selectSearch: true
+  });
+  */ 
   if (!productCode) return;
   // http://127.0.0.1:81/WebProductPrices.hal?prod=102
   console.log('url = ', `${window.location.origin}/WebProductPrices.hal?prod=${productCode}`);
@@ -244,35 +264,77 @@ const productInfoPriceGenerate = (productCode) => {
     url: `${window.location.origin}/WebProductPrices.hal?prod=${productCode}`,
     success: (data) => {
       if (!data) return;
+      console.log('data = ', data);
       data = JSON.parse(data);
-      const prices = data.prices;
+      const prices = data.prices; 
       console.log('prices = ', prices);
       // set first price
+      /*
       let colorC = $(".jq-selectbox select[name='color']").val();
       let typeC = $(".jq-selectbox select[name='type']").val();
       let k = `${typeC}_${colorC}`;
       let hasP = false;
+      */
+
+      let pricesArray = [];
       for (let price of prices) {
-        if (price[k]) {
-          $('.Product .DetailsProd .ProdLi .Price').html(`€${price[k]}`);
-          hasP = true;
-        }
+        let p = price[Object.keys(price)[0]];
+        if (!pricesArray.includes(p)) pricesArray.push(p);
+        console.log('price = ', p);
       }
-      if (!hasP)  $('.Product .DetailsProd .ProdLi .Price').html('-');
+      let maхPrice = Math.max.apply(Math,pricesArray);
+      let minPrice = Math.min.apply(Math,pricesArray);
+      console.log('minPrice = ', minPrice);
+      console.log('maхPrice = ', maхPrice);
+      console.log('select = = ', $(".jq-selectbox select[name='type']"));
+      if (minPrice != maхPrice) $('.Product .DetailsProd .ProdLi .Price').html(`€${minPrice} - ${maхPrice}`);
+      else $('.Product .DetailsProd .ProdLi .Price').html(`€${minPrice}`);
+
+      $(".jq-selectbox select[name='color']").attr("disabled","disabled");
+      
+      $("input[name=unit]").attr("disabled","disabled");
+      $("a[data-target='#ModalRecommended']").attr('style', 'cursor: not-allowed');
+      $('select[name=type]').trigger('refresh');
+      $('select[name=color]').trigger('refresh');
+      let allColorOption = [];
+      $(".jq-selectbox select[name='color'] option").each((i, el) => {
+        allColorOption.push($(el));
+      });
+
+      // if (!hasP)  $('.Product .DetailsProd .ProdLi .Price').html('-');
       //
+      $('input[name=unit]').on('input', (e) => {
+        $($('input[name=unit]')).val($($('input[name=unit]')).val().replace(/[A-Za-zА-Яа-яЁё]/, ''));
+        // if (e.target.value);
+      });
       $(".jq-selectbox select[name='type']").change((e) => {
         let typeCode = e.target.value;
         let colorCode = $(".jq-selectbox select[name='color']").val();
+        console.log('colorCode = ', colorCode);
+        console.log('typeCode= ', typeCode);
         let key = `${typeCode}_${colorCode}`;
-        let hasPrice = false;
+        if ( typeCode == 'emptyMaterial') {
+          $(".jq-selectbox select[name='color']").attr("disabled","disabled"); 
+          if (minPrice != maхPrice) $('.Product .DetailsProd .ProdLi .Price').html(`€${minPrice} - ${maхPrice}`);
+          else $('.Product .DetailsProd .ProdLi .Price').html(`€${minPrice}`);
+          $(".jq-selectbox select[name='color'] option[value='emptyColor']").prop('selected', true);
+          $("a[data-target='#ModalRecommended']").attr('style', 'cursor: not-allowed');
+          $('select[name=color]').trigger('refresh');
+          return;
+        } else{
+          $("a[data-target='#ModalRecommended']").attr('style', 'cursor: not-allowed');
+          $(".jq-selectbox select[name='color']").attr("disabled", false);
+          $('select[name=color]').trigger('refresh');
+        } 
         for (let price of prices) {
-          if (price[key]) {
-            $('.Product .DetailsProd .ProdLi .Price').html(`€${price[key]}`);
-            hasPrice = true;
-          }
+          console.log('price = ', price);
+          let combination = Object.keys(price)[0];
+          let a = combination.split('_');
+          console.log('a = =', a);
+          console.log('typeCode = ', typeCode);
+          if (typeCode == a[0]) $('.Product .DetailsProd .ProdLi .Price').html(`€${price[combination]}`);
         }
-        if (!hasPrice)  $('.Product .DetailsProd .ProdLi .Price').html('-');
-        /*
+        
         let keys = prices.map(price => Object.keys(price)[0]);
         let colorCodes = [];
         for (let k of keys) {
@@ -280,32 +342,45 @@ const productInfoPriceGenerate = (productCode) => {
           if (str == typeCode) colorCodes.push(k.slice(k.lastIndexOf('_') + 1, k.length));
         }
         console.log('colorCodes = ', colorCodes);
+        $("select[name='color']").empty();
+        for (let option of allColorOption) {
+          $("select[name='color']").append(option);
+        }
+       
         $(".jq-selectbox select[name='color'] option").each((i, el) => {
           let val = $(el).val();
+          console.log('el = ',$(el));
           console.log('val = ', val);
-          if (colorCodes.includes(val)) {
-            $(`.color-class-${val}`).show();
-            // $(el).show();
+          if (colorCodes.includes(val) || val == 'emptyColor') {
+            $(el).prop('disabled', false);
           } else {
-            $(`.color-class-${val}`).hide(); // $(el).hide();
+            $(el).remove();
           }
+          if (val == 'emptyColor')  $(el).prop('selected', true);
         });
-        */
+        $('select[name=color]').trigger('refresh');
+
       });
+      
       $(".jq-selectbox select[name='color']").change((e) => {
         let typeCode = $(".jq-selectbox select[name='type']").val();
         let colorCode = e.target.value;
+        console.log('colorCode = ', colorCode);
+        if (colorCode != 'emptyColor') {
+          $("a[data-target='#ModalRecommended']").attr('style', 'cursor: pointer');
+          $("input[name=unit]").removeAttr("disabled");
+        }
+        else {
+          $("a[data-target='#ModalRecommended']").attr('style', 'cursor: not-allowed');
+          $("input[name=unit]").attr("disabled","disabled");
+        }
         let key = `${typeCode}_${colorCode}`;
-        let hasPrice = false;
         for (let price of prices) {
           if (price[key]) {
             $('.Product .DetailsProd .ProdLi .Price').html(`€${price[key]}`);
-            hasPrice = true;
           }
         }
-        if (!hasPrice)  $('.Product .DetailsProd .ProdLi .Price').html('-');
       });
-      
     },
     error: (e) => {
       console.log('error = ', e);
@@ -458,6 +533,11 @@ function ClearContactForm(form){
 
 $(document).ready(function(){
   console.log('ready');
+  /*
+  if (window.location.pathname == "/") {
+    console.log('1');
+    $(document).scrollTop(0);
+  }*/
   galerySlider();
   // profile 
   if (window.location.pathname == '/cabinet-profile') getData();
@@ -496,7 +576,9 @@ $(document).ready(function(){
   // end -------------
   // products dropdown
   const [ productElement ] = document.getElementsByClassName('ArrowDownMenu');
-  //console.log('productElement = ', productElement);
+
+  $('.ArrowDownMenu a').attr('href', '/veikals/catalog#products');
+
   let dropdownProductsHTML = '';
    $.ajax({
     type: "GET",
@@ -508,7 +590,7 @@ $(document).ready(function(){
       if (!data['FilterType'] || !data['FilterType'].length) return;
       const wshData = data['FilterType'].map(el => el);
       for (let el of wshData) {
-        dropdownProductsHTML += `<li><a href=${window.location.origin}/veikals/catalog?wsh=${Object.keys(el)[0]}> ${Object.values(el)[0]} </a></li>`;
+        dropdownProductsHTML += `<li><a href=${window.location.origin}/veikals/catalog?wsh=${Object.keys(el)[0]}#products> ${Object.values(el)[0]} </a></li>`;
       }
       if (dropdownProductsHTML) $(productElement).append(`<ul> ${dropdownProductsHTML} </ul>`);
     },
@@ -561,12 +643,25 @@ $(document).ready(function(){
 
   $(".DetailsProd .btns-red").click(function(){
     var form = $(this).closest("form").get(0);
-    $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.qty.value + "&item=" + form.item.value,function(data){
+    if (form.type.value == 'emptyMaterial' || form.color.value == 'emptyColor' || !form.unit.value) return console.log('EMPTY!');
+    $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.unit.value + "&item=" + form.item.value,function(data){
       //alert(data);
       //refresh basket
       //location.reload();
       console.log('509');
       $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
+      
+      $('#addedBasketAllert').show();
+      form.type.value = 'emptyMaterial';
+      form.color.value = 'emptyColor';
+      form.unit.value = '';
+      $('select[name=type]').trigger('refresh');
+      $('select[name=color]').trigger('refresh');
+      const timeOut = setTimeout(() => {
+        $('#addedBasketAllert').hide();
+        clearTimeout(timeOut);
+      }, 2000);
+
       // $(".Cart a").html($(data).find("res").attr("qty"));
     })
   });  
@@ -611,14 +706,128 @@ $(document).ready(function(){
         if (data!=""){
           $("#ModalAddCart .modal_inner_body").html(data);
           $("#ModalAddCart .modal_inner_body").find('input[type=checkbox], select, input[type=radio], input[type=file],input[type=number]').styler({
-              selectSearch: true
-          }); 
-          $(".ModProdLi .btns-white-red").click(function(){
+              selectSearch: true,
+              selectSearchLimit: 5
+          });
+          //================Custom filter=============
+
+          $.ajax({
+            type: "GET",
+            url: `${window.location.origin}/WebProductPrices.hal?prod=${itemcode}`,
+            success: (data) => {
+              if (!data) return;
+              data = JSON.parse(data);
+              const prices = data.prices; 
+        
+              let pricesArray = [];
+              for (let price of prices) {
+                let p = price[Object.keys(price)[0]];
+                if (!pricesArray.includes(p)) pricesArray.push(p);
+              }
+              let maхPrice = Math.max.apply(Math,pricesArray);
+              let minPrice = Math.min.apply(Math,pricesArray);
+              //
+              if (maхPrice != minPrice) $('.modalPrice').html(`€${minPrice} - ${maхPrice}`);
+              else $('.modalPrice').html(`€${minPrice}`);
+
+              $(".jq-selectbox select[name='color']").attr("disabled","disabled"); 
+              $("a[data-target='#ModalRecommended']").attr('style', 'cursor: not-allowed');
+              console.log('input  = ', $('input[name=unit]'));
+              $('select[name=type]').trigger('refresh');
+              $('select[name=color]').trigger('refresh');
+              let allColorOption = [];
+              $(".jq-selectbox select[name='color'] option").each((i, el) => {
+                allColorOption.push($(el));
+              });
+
+              $('input[name=unit]').on('input', (e) => {
+                $($('input[name=unit]')).val($($('input[name=unit]')).val().replace(/[A-Za-zА-Яа-яЁё]/, ''))
+              });
+
+              $(".jq-selectbox select[name='type']").change((e) => {
+                e.preventDefault();
+                let typeCode = e.target.value;
+                let colorCode = $(".jq-selectbox select[name='color']").val();
+                console.log('colorCode = ', colorCode);
+                console.log('typeCode= ', typeCode);
+                let key = `${typeCode}_${colorCode}`;
+                if ( typeCode == 'emptyMaterial') {
+                  $(".jq-selectbox select[name='color']").attr("disabled","disabled");
+                  if (minPrice != maхPrice) $('.modalPrice').html(`€${minPrice} - ${maхPrice}`);
+                  else $('.modalPrice').html(`€${minPrice}`);
+                  $(".jq-selectbox select[name='color'] option[value='emptyColor']").prop('selected', true);
+                  $("a[data-target='#ModalRecommended']").attr('style', 'cursor: not-allowed');
+                  $('select[name=color]').trigger('refresh');
+                  return;
+                } else{
+                  $("a[data-target='#ModalRecommended']").attr('style', 'cursor: not-allowed');
+                  $(".jq-selectbox select[name='color']").attr("disabled", false);
+                  $('select[name=color]').trigger('refresh');
+                } 
+                for (let price of prices) {
+                  console.log('price = ', price);
+                  let combination = Object.keys(price)[0];
+                  let a = combination.split('_');
+                  console.log('a = =', a);
+                  console.log('typeCode = ', typeCode);
+                  if (typeCode == a[0]) $('.modalPrice').html(`€${price[combination]}`);
+                }
+                
+                let keys = prices.map(price => Object.keys(price)[0]);
+                let colorCodes = [];
+                for (let k of keys) {
+                  let str = k.slice(0, k.lastIndexOf('_'));
+                  if (str == typeCode) colorCodes.push(k.slice(k.lastIndexOf('_') + 1, k.length));
+                }
+                console.log('colorCodes = ', colorCodes);
+                $("select[name='color']").empty();
+                for (let option of allColorOption) {
+                  $("select[name='color']").append(option);
+                }
+               
+                $(".jq-selectbox select[name='color'] option").each((i, el) => {
+                  let val = $(el).val();
+                  console.log('el = ',$(el));
+                  console.log('val = ', val);
+                  if (colorCodes.includes(val) || val == 'emptyColor') {
+                    $(el).prop('disabled', false);
+                  } else {
+                    $(el).remove();
+                  }
+                  if (val == 'emptyColor')  $(el).prop('selected', true);
+                });
+                $('select[name=color]').trigger('refresh');
+        
+              });
+              
+              $(".jq-selectbox select[name='color']").change((e) => {
+                e.preventDefault();
+                let typeCode = $(".jq-selectbox select[name='type']").val();
+                let colorCode = e.target.value;
+                console.log('colorCode = ', colorCode);
+                if (colorCode != 'emptyColor') $("a[data-target='#ModalRecommended']").attr('style', 'cursor: pointer');
+                else $("a[data-target='#ModalRecommended']").attr('style', 'cursor: not-allowed');
+                let key = `${typeCode}_${colorCode}`;
+                for (let price of prices) {
+                  if (price[key]) {
+                    $('.modalPrice').html(`€${price[key]}`);
+                  }
+                }
+              });
+            },
+            error: (e) => {
+              console.log('error = ', e);
+            }
+          });
+          //=================end======================
+
+          $(".modal_inner_body .btns-white-red").click(function(){
             var pop = $(this).closest("#ModalAddCart");
             var form = $(this).closest("form").get(0);
             console.log('form = ', form);
+            if (form.type.value == 'emptyMaterial' || form.color.value == 'emptyColor' || !form.unit.value) return console.log('EMPTY!');
             //consol.elog(form);
-            $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.qty.value + "&item=" + form.item.value,function(data){
+            $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.unit.value + "&item=" + form.item.value,function(data){
               //alert(data);
               //refresh basket
               //location.reload();
@@ -656,11 +865,22 @@ $(document).ready(function(){
     e.stopPropagation();
     e.preventDefault();
     var l = $(this).parent();
-    //console.log('l = ',l);
+    console.log('l = ',l);
     cls = $(l).attr("list-cls");
     if ($(".active_filter").length>0){
+      console.log('if');
+      let activeCls = $(".active_filter").attr('list-type');
       $(".active_filter").remove();
+      console.log(activeCls, cls);
+      if (activeCls != cls) {
+        list = $(".filter_option .filter_list" + cls + " > div");
+        sel = $(list).clone(true,true);
+        $(sel).addClass("active_filter");
+        $(".product-catalog-list").prepend(sel);
+        SetFilterSelection(sel,l);  
+      }
     } else {
+      console.log('else');
       list = $(".filter_option .filter_list" + cls + " > div");
       sel = $(list).clone(true,true);
       $(sel).addClass("active_filter");

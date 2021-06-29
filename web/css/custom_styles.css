@@ -173,3 +173,57 @@ ul.ui-autocomplete.ui-menu{
   cursor: pointer;
 }
 /* -------------- */
+.ProductSlider .BoxImageProd {
+  padding-right: 5px;
+  padding-top: 5px;
+}
+.ProductSlider .Title {
+  margin-top: 0;
+}
+.jqselect .ColorItem .disabled {
+  cursor: not-allowed;
+}
+.modalPrice {
+  color: #405584;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 43px;
+  text-align: center;
+}
+#JurCheck-styler {
+  margin-left: 20px;
+}
+#About-tab .nav-link:hover {
+  text-decoration: underline;
+}
+
+@media only screen and (max-width: 991px) {
+/* LEFT MENU*/
+  .TopMenu {
+    width: auto;
+  }
+/*  END  ----  LEFT MENU*/
+
+/* LANG MENU */
+  .LangBox{
+    width: 70px;
+    position: absolute;
+    left: 60px;
+    top: 13px;
+  }
+
+  .LangBox .jq-selectbox__select {
+    padding: 0 0 0 30px;
+  }
+
+  .LangBox .jq-selectbox__dropdown {
+    padding: 10px 16px;
+    width: 90px;
+    top: 26px;
+    left: -5px;
+  }
+
+  .LangBox .jq-selectbox__dropdown li {
+    padding: 3px 0 10px 32px;
+  }
+}

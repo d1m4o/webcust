@@ -15,10 +15,15 @@ $(document).ready(function(){
         $('.LoginInner').toggle();
         return false;
     });
+    // ChangePWClass
+    $('.ChangePWClass a').click(() => {
+        console.log('click on change');
+        $('#ModalChangePass').modal('show');
+    });
     
     $('.OrderClass a').click(() => {
         console.log('OrderClass clicked!');
-        window.location = `${window.location.origin}/cabinet-orders`;
+        window.location = `${window.location.origin}/veikals/orders`;
     });
 
     $('.logoutClass a').click(() => {
@@ -141,29 +146,3 @@ $(document).ready(function(){
         $('area').addClass('active').css({"opacity":"1"});
     }); */
  });
-
-
-// http://localhost:81/dologin&company=3&login=1005&passwd=123
-/*
-WebOutString("<div class='PageCabinet ListCabinet'>");
-WebOutString("<div class='BoxTitleImageCab'>");
-WebOutString("<div class='ImageCab'> <a href=''><img src='../img/temp/our_product.jpg' alt='image'></a> </div>");
-WebOutString("<div class='InfoBox'> <h2><a href=''>name</a></h2> <div class='descrip'>descrip</div>");
-WebOutString("<div class='price'>€200 price</div> </div> </div>");
-WebOutString("<div class='ListInfoCab'>");
-WebOutString("<div class='row'> <div class='col-6'> <div class='Info1'>Pasitujuma numurs:</div> </div>");
-WebOutString("<div class='col-6'> <div class='Info2'>123123123123</div> </div> </div> </div>");
-WebOutString("<div class='ListInfoCab'>");
-WebOutString("<div class='row'> <div class='col-6'> <div class='Info1'>Preču pārvadātājs:</div> </div>");
-WebOutString("<div class='col-6'> <div class='Info2'>Sanemts veikala</div> </div> </div> </div>");
-WebOutString("<div class='ListInfoCab'> <div class='row'> <div class='col-6'><div class='Info1'>Saņēmējs:</div></div>");
-WebOutString("<div class='col-6'> <div class='Info2'>Vlads Ventru</div> </div> </div></div>");
-WebOutString("<div class='ListInfoCab'> <div class='row'> <div class='col-6'> <div class='Info1'>Samaksas veids:</div> </div>");
-WebOutString("<div class='col-6'> <div class='Info2'>Pārskaitījums</div> </div> </div></div>");
-WebOutString("<div class='ListInfoCab'> <div class='row'>");
-WebOutString("<div class='col-6'> <div class='Info1'>Statuss:</div> </div> <div class='col-6'>");
-WebOutString("<div class='Info2 Status'>Prece vel veikala</div> </div> </div> </div>");
-WebOutString("<div class='ListInfoCab'> <div class='row'> <div class='col-6'><div class='Info1'>Datums:</div>");
-WebOutString("</div> <div class='col-6'> <div class='Info2'>" & ToolWebNGTranslateText(25805) & "</div> </div>");
-WebOutString("</div></div><div class='BoxBtns'> <a href='' class='btns-blue-dark'>Pasutīt velreiz</a> </div> </div>");
- */

@@ -1,6 +1,7 @@
 //Google MAP
-
+// this code is not used
 function initMap() {
+    return;
     var element2 = document.getElementById('mapPage');
     
     var option2 = {

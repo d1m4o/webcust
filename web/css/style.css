@@ -690,7 +690,10 @@ header {
   .ProductSlider .BoxImageProd {
     position: relative;
     margin-left: 38px;
-    padding-bottom: 65px; }
+    padding-bottom: 65px; 
+    padding-right: 5px;
+    padding-top: 5px;
+    }
     .ProductSlider .BoxImageProd img {
       border-radius: 15px;
       -moz-border-radius: 15px;
