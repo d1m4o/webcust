@@ -227,3 +227,7 @@ ul.ui-autocomplete.ui-menu{
     padding: 3px 0 10px 32px;
   }
 }
+
+.ProductList .ProductList-menu ul li {
+  display: block;
+}

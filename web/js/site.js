@@ -1,3 +1,45 @@
+let activeType = '';
+const activeFilters = {
+  /*FilterColor: [],
+  FilterMaterial: [],
+  FilterType: [] */
+};
+
+let webDataArray = [];
+  // get WebProductMaterialColor
+  if (window.location.pathname == '/veikals/catalog') {
+    $.ajax({
+      type: "GET",
+      url: `${window.location.origin}/WebProductMaterialColor.hal`,
+      success: (data, message, res) => {
+        // console.log('data = ', data);
+        console.log('WebProductMaterialColor seccess');
+        if (res.status != 200) return;
+        let webData = data;
+        webData = webData.slice(1, -1);
+        // console.log('webData = ', webData);
+        let tmpWebDataArray = webData.split('],');
+        let i = 0;
+        for (let el of tmpWebDataArray) {
+            i++;
+            if (i == tmpWebDataArray.length) el = el.slice(0, -1);
+            el = el.slice(1);
+            el = el.split(',');
+            // console.log('el = ', el);
+            webDataArray.push(el);
+            /*
+            if (el.includes(cls)) {
+              if (!activeFilters[0].includes(el[0])) activeFilters[0].push(el[0])
+              if (!activeFilters[1].includes(el[1])) activeFilters[1].push(el[1])
+              if (!activeFilters[2].includes(el[2])) activeFilters[2].push(el[2])
+            }*/
+        }
+      },
+      error: (e) => {
+        console.log('error = ', e);
+      }
+    });
+  }
 // galery 
 const galerySlider = () => {
   // if (window.location.pathname != '/musu-darbi') return;
@@ -820,14 +862,13 @@ $(document).ready(function(){
             }
           });
           //=================end======================
-
           $(".modal_inner_body .btns-white-red").click(function(){
             var pop = $(this).closest("#ModalAddCart");
             var form = $(this).closest("form").get(0);
             console.log('form = ', form);
             if (form.type.value == 'emptyMaterial' || form.color.value == 'emptyColor' || !form.unit.value) return console.log('EMPTY!');
             //consol.elog(form);
-            $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.unit.value + "&item=" + form.item.value,function(data){
+            $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.qty.value + "&item=" + form.item.value,function(data){
               //alert(data);
               //refresh basket
               //location.reload();
@@ -861,6 +902,7 @@ $(document).ready(function(){
       location.reload();
     })
   });
+  
   $(".filter-buttons li a").click(function(e){
     e.stopPropagation();
     e.preventDefault();
@@ -888,8 +930,21 @@ $(document).ready(function(){
       SetFilterSelection(sel,l);
     }
   });
-
-  $(".filter_menu ul li a").click(function(e){
+  /*
+  let active_filters = {};
+  let allFilterNames = [];
+  $(".filter_menu").each((i, el) => {
+    console.log('el = ', el);
+    let fName = $(el).attr('list-type');
+    if (!allFilterNames.includes(fName)) allFilterNames.push(fName);
+  });
+  console.log('allFilterNames = ', allFilterNames);
+  for (let name of allFilterNames) active_filters[name] = [];
+  console.log('active_filters = ', active_filters);
+  console.log('allFilterNames = ', allFilterNames);
+  */
+  $(".filter_menu ul li a").click(function(e) {
+    console.log('click ul li a');
     e.stopPropagation();
     e.preventDefault();
     var l = $(this).parent();
@@ -898,6 +953,9 @@ $(document).ready(function(){
     $(l).toggleClass("active");
     
     var type = $(this).closest(".filter_menu").attr("list-type");
+    console.log('type = ', type);
+    activeType = type;
+    
     var opt = $(".filter-buttons > li[list-cls='" + type + "']");
     var options = $(opt).data("filter_options");
     if (!options){
@@ -909,6 +967,9 @@ $(document).ready(function(){
       $(opt).data("origstr",$(opt).find("a").html());
     }
     var cls = $(l).attr("cls").toUpperCase();
+ 
+   
+    // console.log('webDataArray = ', webDataArray);
     var inx = options.indexOf(cls);
     if (inx>-1){
       options.splice(inx,1);
@@ -920,7 +981,9 @@ $(document).ready(function(){
       strvals.push($(this).html());
     }
     //console.log('opt397 = ', opt);
+    console.log('options = ', options);
     $(opt).data("filter_options",options);
+    console.log('$(opt).data("filter_options" = ', $(opt).data("filter_options"));
     $(opt).data("filter_options_str",strvals);
     if (strvals.length>0){
       $(opt).find("a").html(strvals.join(","));
@@ -930,14 +993,16 @@ $(document).ready(function(){
     RefreshFilters();
     
     onFilterClick(); // rebuild pagination after filtrated
-    console.log('filterNames406 =', filterNames);
     if (filterNames.includes($(opt).text().toUpperCase())) {
       $(opt).removeClass('active');
     } else {
       //console.log('opt = ', opt);
       $(opt).addClass('active');
-      $(opt).find("a").append(`<span id=\'span\' class=\'fa fa-times fa-lg\' aria-hidden=\'true\'> </span>`);
-      setTimeout(() => {
+      $(opt).find("a").append(`
+      <svg id='span${type}' class="svg-inline--fa fa-times fa-w-11 fa-lg" aria-hidden="true" focusable="false" data-prefix="fa" data-icon="times" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512" data-fa-i2svg=""><path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+      `);
+      // setTimeout(() => {
+        /*
         $('.filter-buttons li a').each((index) => {
           if ($('.filter-buttons li a')[index].firstElementChild) {
             console.log(`$('.filter-buttons li a') = `, $('.filter-buttons li a'));
@@ -951,8 +1016,16 @@ $(document).ready(function(){
               $(opt).removeClass('active');
             });
           }
-        })
-      }, 500);
+        }) */
+        $(`#span${type}`).click((e) => {
+          $(opt).data("filter_options", []);
+          $(opt).data("filter_options_str",[]);
+          $(opt).find("a").html($(opt).data("origstr"));
+          RefreshFilters();
+          onFilterClick();
+          $(opt).removeClass('active');
+        });
+      // }, 500);
  
     }
   });
@@ -979,6 +1052,7 @@ $(document).ready(function(){
 
 function RefreshFilters(){
   var filters = {};
+  console.log('refresh filters');
   $(".filter-buttons > li").each(function(){
     filters[$(this).attr("list-cls")] = $(this).data("filter_options");
     $(".product-catalog-list > div").each(function(){
@@ -1012,7 +1086,65 @@ function RefreshFilters(){
       }
     });
   })
+  filtrateFilters(filters);
+}
 
+function filtrateFilters(activeFiltersObj) {
+  console.log('webDataArray = ', webDataArray);
+  // activeType - на какой фильтр кликнул 
+  // activeFiltersObj - активные фильтры 
+  console.log('activeFiltersObj = ', activeFiltersObj);
+  let showallf = true;
+  for (let filterName in activeFiltersObj) {
+    activeFilters[filterName] = [];
+    if (activeFiltersObj[filterName] && activeFiltersObj[filterName].length > 0) showallf = false;
+  }
+  if (showallf) {
+    for (let aFName in activeFilters) {
+      $(`div[list-type=${aFName}] div ul li`).each((index, element) => {
+         $(element).show();
+      });
+    }
+    return;
+  }
+
+  for (let filterName in activeFiltersObj) {
+    if (activeFiltersObj[filterName] && activeFiltersObj[filterName].length) {
+
+      for (let choosenFilter of activeFiltersObj[filterName]) {
+
+        for (let el of webDataArray) {
+          if (el.includes(choosenFilter)) {
+            if (filterName == 'FilterType' ) {
+              if (!activeFilters.FilterMaterial.includes(el[1])) activeFilters.FilterMaterial.push(el[1]);
+              if (!activeFilters.FilterColor.includes(el[2])) activeFilters.FilterColor.push(el[2]);
+            } else if (filterName == 'FilterMaterial') { 
+              if (!activeFilters.FilterType.includes(el[0])) activeFilters.FilterType.push(el[0]);
+              if (!activeFilters.FilterColor.includes(el[2])) activeFilters.FilterColor.push(el[2]);
+            } else if (filterName == 'FilterColor') {
+              if (!activeFilters.FilterType.includes(el[0])) activeFilters.FilterType.push(el[0]);
+              if (!activeFilters.FilterMaterial.includes(el[1])) activeFilters.FilterMaterial.push(el[1]);
+            }
+          }
+        }
+
+      }
+
+    }
+  }
+  console.log('f - ', activeFilters);
+  // console.log('webDataArray = ', webDataArray);
+  // console.log('asdsd = ', $("div[list-type='FilterColor'] div ul"));
+  for (let aFName in activeFilters) {
+    $(`div[list-type=${aFName}] div ul li`).each((index, element) => {
+      // console.log('element = ', element);
+      let cls = $(element).attr('cls');
+      if (activeType !== aFName && activeFilters[aFName] && !activeFilters[aFName].includes(cls)) {
+        $(element).hide();
+      }
+      if (activeFilters[aFName].includes(cls)) $(element).show();
+    });
+  }
 }
 
 function SetFilterSelection(sel,l){
