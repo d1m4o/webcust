@@ -5,10 +5,8 @@ const getReqs = () => {
         url: `${window.location.origin}/WebGetRequisitesSave.hal`,
         success: (data, message, res) => {
           if (!data) return;
-          console.log('res = ', data);
           data = JSON.parse(data);
-          console.log('data = ', data);
-
+          console.log('data =', data);
           if (res.status != 200) return;
           const { fiz_accNumber, fiz_bankCode, fiz_email, fiz_phone, fiz_sia,
             jur_accNumber, jur_address, jur_bankCode, jur_contactPersonSIA, 
@@ -97,6 +95,84 @@ const setDisabledInputs = (isDisabled) => {
   }
 };
 
+const onRequisitesSaveClick = (personMode) => {
+  console.log('personMode = ', personMode);
+  if (personMode == 1) { // JUR
+    const sia = $('#reqJur_sia').val();
+    const regNr = $('#reqJur_regNr').val();
+    const address = $('#reqJur_address').val();
+    const accNumber = $('#reqJur_accNumber').val();
+    const bankCode = $('#reqJur_bankCode').val();
+    const contactPersonSIA = $('#reqJur_contactPersonSIA').val();
+    const source = $('#reqJur_source').val();
+    const phone = $('#reqJur_phone').val();
+    const email = $('#reqJur_email').val();
+
+    const isJur = document.getElementById("JurCheck").customChecked;
+    if (isJur) {
+      $('#JurCheck-styler').addClass('disabled');
+      $("#JurCheck").prop('disabled', true);
+      $('input[type=checkbox]').trigger('refresh');
+      $("#JurCheck").prop("onclick", null).off("click");
+    }
+
+    //console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_address=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_source=${source}&jur_phone=${phone}&jur_email=${email}`);
+    $.ajax({
+      type: "GET",
+      url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_address=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_source=${source}&jur_phone=${phone}&jur_email=${email}`,
+      success: (data, message, res) => {
+        if (res.status != 200) return;
+        console.log(1, res.responseText);
+        if (res.responseText == 'Error') {
+          console.log('Error');
+        } else if (res.responseText == 'Ok') {
+          console.log('Ok');
+          $('#savedLabelJur').css('display', 'inline');
+          const timeOut = setTimeout(() => {
+            $('#savedLabelJur').hide();
+            clearTimeout(timeOut);
+          }, 2000);
+        } else if (res.responseText == 'EmailExistError') {
+          console.log('EmailExistError');
+        }
+      },
+      error: (e) => {
+        console.log('error = ', e);
+      }
+    });
+
+
+  } else if(personMode == 2) { // FIZ
+    const sia = $('#reqFiz_sia').val();
+    const accNumber = $('#reqFiz_accNumber').val();
+    const bankCode = $('#reqFiz_bankCode').val();
+    const phone = $('#reqFiz_phone').val();
+    const email = $('#reqFiz_email').val();
+    $.ajax({
+      type: "GET",
+      url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&fiz_phone=${phone}&fiz_email=${email}`,
+      success: (data, message, res) => {
+        if (res.status != 200) return;
+        console.log('res.responseText = ', res.responseText);
+        if (res.responseText == 'Error') {
+           console.log('Error');
+        } else if (res.responseText == 'Fiz') {
+          console.log('Ok');
+          $('#savedLabel').css('display', 'inline');
+          const timeOut = setTimeout(() => {
+            $('#savedLabel').hide();
+            clearTimeout(timeOut);
+          }, 2000);
+        }
+      },
+      error: (e) => {
+        console.log('error = ', e);
+      }
+    });
+  }
+};
+
+
 document.addEventListener("DOMContentLoaded", function(event) { 
   getReqs();
   $('#JurCheck').click((e) => {
@@ -107,5 +183,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
     let val = document.getElementById("JurCheck").customChecked;
     if (val) setDisabledInputs(false);
     else setDisabledInputs(true);
+  });
+  $('#reqFiz_saveBtn').click(() => {
+    onRequisitesSaveClick(2);
+  });
+  $('#reqJur_saveBtn').click(() => {
+    onRequisitesSaveClick(1);
   });
 });

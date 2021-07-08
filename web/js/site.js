@@ -1,3 +1,49 @@
+function isVisible(elem) {
+  let coords = elem.getBoundingClientRect();
+  let windowHeight = document.documentElement.clientHeight;
+
+  let topVisible = coords.top > 0 && coords.top < windowHeight;
+  let bottomVisible = coords.bottom < windowHeight && coords.bottom > 0;
+
+  return topVisible || bottomVisible;
+}
+
+/*
+
+function isVisible(elem) {
+
+  let coords = elem.getBoundingClientRect();
+
+  let windowHeight = document.documentElement.clientHeight;
+
+  let extendedTop = -windowHeight;
+  let extendedBottom = 2 * windowHeight;
+
+  // top visible || bottom visible
+  let topVisible = coords.top > extendedTop && coords.top < extendedBottom;
+  let bottomVisible = coords.bottom < extendedBottom && coords.bottom > extendedTop;
+
+  return topVisible || bottomVisible;
+}
+*/
+
+function showVisible() {
+  for (let img of document.querySelectorAll('img')) {
+    let realSrc = img.dataset.src;
+    if (!realSrc) continue;
+
+    if (isVisible(img)) {
+      img.src = realSrc;
+      img.dataset.src = '';
+    }
+  }
+}
+function showVisibleTimeOut() {
+  setTimeout(() => {
+    console.log(1111);
+    showVisible();
+  }, 300);
+}
 let activeType = '';
 const activeFilters = {
   /*FilterColor: [],
@@ -12,12 +58,10 @@ let webDataArray = [];
       type: "GET",
       url: `${window.location.origin}/WebProductMaterialColor.hal`,
       success: (data, message, res) => {
-        // console.log('data = ', data);
-        console.log('WebProductMaterialColor seccess');
+
         if (res.status != 200) return;
         let webData = data;
         webData = webData.slice(1, -1);
-        // console.log('webData = ', webData);
         let tmpWebDataArray = webData.split('],');
         let i = 0;
         for (let el of tmpWebDataArray) {
@@ -25,14 +69,11 @@ let webDataArray = [];
             if (i == tmpWebDataArray.length) el = el.slice(0, -1);
             el = el.slice(1);
             el = el.split(',');
-            // console.log('el = ', el);
             webDataArray.push(el);
-            /*
-            if (el.includes(cls)) {
-              if (!activeFilters[0].includes(el[0])) activeFilters[0].push(el[0])
-              if (!activeFilters[1].includes(el[1])) activeFilters[1].push(el[1])
-              if (!activeFilters[2].includes(el[2])) activeFilters[2].push(el[2])
-            }*/
+        }
+        const filter = filtrateByUrl(); 
+        if (filter) {
+          SetFilterProduct(filter);
         }
       },
       error: (e) => {
@@ -42,9 +83,7 @@ let webDataArray = [];
   }
 // galery 
 const galerySlider = () => {
-  // if (window.location.pathname != '/musu-darbi') return;
   if (window.location.pathname != '/' && window.location.pathname != '/musu-darbi') return;
-  console.log('galerySlider !');
   const tabModals = {};
   $('.Tab-panel-works').each((index, element) => {
     let id = $(element).attr('id');
@@ -68,6 +107,7 @@ const galerySlider = () => {
       }
       $(e.target).closest('.ModalWork').modal('hide');
       $(`${tabModals[currentTabId][next]}`).modal('show');
+      showVisibleTimeOut();
     }
   });
 
@@ -84,6 +124,7 @@ const galerySlider = () => {
       }
       $(e.target).closest('.ModalWork').modal('hide');
       $(`${tabModals[currentTabId][prev]}`).modal('show');
+      showVisibleTimeOut();
     }
   });
 }
@@ -94,30 +135,19 @@ const onDeliveryClick = (deliveryType) => {
     type: "GET",
     url: `${window.location.origin}/WebDeliveryMode.hal?mode=${deliveryType}`,
     success: (data, message, res) => {
-      console.log('data = ', data);
       if (res.status != 200) return;
       if (res.responseText == 'Error') {
-        console.log('что-то пошло не так!onDeliveryClick')
-        console.log(`${window.location.origin}/WebDeliveryMode.hal?mode=${deliveryType}`);
-      } else if (res.responseText == 'Ok') {
-        // window.location.href = `${window.location.origin}/thanks`
-        console.log(`${window.location.origin}/WebDeliveryMode.hal?mode=${deliveryType}`);
-        console.log('успех onDeliveryClick = ', deliveryType);
-        
+        console.log('Error');
+      } else if (res.responseText == 'Ok') {  
         $.ajax({
           type: "GET",
           url: `${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`,
           success: (data, message, res) => {
-            console.log('data = ', data);
             if (res.status != 200) return;
             if (res.responseText == 'Error') {
-              console.log('что-то пошло не так!onDeliveryClick WebFinishOrder')
-              console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
+              console.log('Error');
             } else if (res.responseText == 'Ok') {
-              // window.location.href = `${window.location.origin}/orders`;
               window.location.href = `${window.location.origin}/thanks`;
-              console.log(`${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`);
-              console.log('успех onDeliveryClick WebFinishOrder = ', deliveryType);
             }
           },
           error: (e) => {
@@ -132,77 +162,7 @@ const onDeliveryClick = (deliveryType) => {
   });
 };
 // ---------------------------------------------- end delivery --------------------
-// reqs
-const onRequisitesSaveClick = (personMode) => {
-  if (personMode == 1) { // JUR
-    const sia = $('#reqJur_sia').val();
-    const regNr = $('#reqJur_regNr').val();
-    const address = $('#reqJur_address').val();
-    const accNumber = $('#reqJur_accNumber').val();
-    const bankCode = $('#reqJur_bankCode').val();
-    const contactPersonSIA = $('#reqJur_contactPersonSIA').val();
-    const source = $('#reqJur_source').val();
-    const phone = $('#reqJur_phone').val();
-    const email = $('#reqJur_email').val();
 
-    //
-    console.log('checkboxVal = ', document.getElementById("JurCheck").customChecked);
-    const isJur = document.getElementById("JurCheck").customChecked;
-    if (isJur) {
-      // $("#JurCheck").prop("checked", true);
-      $('#JurCheck-styler').addClass('disabled');
-      $("#JurCheck").prop('disabled', true);
-      $('input[type=checkbox]').trigger('refresh');
-      $("#JurCheck").prop("onclick", null).off("click");
-    }
-    //
-    console.log('log = ', `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_addredd=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_sourse=${source}&jur_phone=${phone}&jur_email=${email}`);
-    $.ajax({
-      type: "GET",
-      url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&jur_sia=${sia}&jur_regNr=${regNr}&jur_address=${address}&jur_accNumber=${accNumber}&jur_bankCode=${bankCode}&jur_contactPersonSIA=${contactPersonSIA}&jur_source=${source}&jur_phone=${phone}&jur_email=${email}`,
-      success: (data, message, res) => {
-        console.log('data = ', data);
-        if (res.status != 200) return;
-        if (res.responseText == 'Error') {
-            console.log('что-то пошло не так!onRequisitesSaveClick 1111111')
-        } else if (res.responseText == 'Ok') {
-          // window.location.href = `${window.location.origin}/thanks`
-          console.log('успех onRequisitesSaveClick 11111');
-        }
-      },
-      error: (e) => {
-        console.log('error = ', e);
-      }
-    });
-
-
-  } else if(personMode == 2) { // FIZ
-    const sia = $('#reqFiz_sia').val();
-    const accNumber = $('#reqFiz_accNumber').val();
-    const bankCode = $('#reqFiz_bankCode').val();
-    const phone = $('#reqFiz_phone').val();
-    const email = $('#reqFiz_email').val();
-    console.log(`${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&fiz_phone=${phone}&fiz_email=${email}`);
-    $.ajax({
-      type: "GET",
-      url: `${window.location.origin}/WebRequisitesSave.hal?mode=${personMode}&fiz_sia=${sia}&fiz_accNumber=${accNumber}&fiz_bankCode=${bankCode}&fiz_phone=${phone}&fiz_email=${email}`,
-      success: (data, message, res) => {
-        console.log('data = ', data);
-        if (res.status != 200) return;
-        if (res.responseText == 'Error') {
-            console.log('что-то пошло не так!onRequisitesSaveClick 22222');
-        } else if (res.responseText == 'Ok') {
-          // window.location.href = `${window.location.origin}/thanks`
-          console.log('успех onRequisitesSaveClick 222222');
-        }
-      },
-      error: (e) => {
-        console.log('error = ', e);
-      }
-    });
-  }
-};
-//
 // profile
 const getData = () => {
   $.ajax({
@@ -210,10 +170,9 @@ const getData = () => {
     url: `${window.location.origin}/WebGetCabinetData.hal`,
     success: (data, message, res) => {
       data = JSON.parse(data);
-      console.log('data = ', data);
       if (res.status != 200) return;
       if (res.responseText == 'Error') {
-        return console.log('что-то пошло не так! profile getData');
+        return console.log('Error');
       }
       const { name, phone, email, address } = data;
       if (name) $('#cabinet_firstname').val(name);
@@ -228,7 +187,6 @@ const getData = () => {
 };
 
 const onCabinetSaveBtnClick = () => {
-  console.log('clicked onCabinetSaveBtnClick');
   const name = $('#cabinet_firstname').val();
   const surename = $('#cabinet_secondname').val();
   const email = $('#cabinet_email').val();
@@ -271,13 +229,16 @@ $.ajax({
   type: "GET",
   url: `${window.location.origin}/WebUpdateCustomerData.hal?name=${name}&surename=${surename}&email=${email}&phone=${phone}&address=${address}&newPw=${newPW}`,
   success: (data, message, res) => {
-    console.log('data = ', data);
     if (res.status != 200) return;
     if (res.responseText == 'Error') {
-        console.log('что-то пошло не так! profile click save Error');
+        console.log('Error');
     } else if (res.responseText == 'Ok') {
-      // window.location.href = `${window.location.origin}/thanks`
       console.log('Ok');
+      $('#savedLabel').css('display', 'inline');
+      const timeOut = setTimeout(() => {
+        $('#savedLabel').hide();
+        clearTimeout(timeOut);
+      }, 2000);
     }
   },
   error: (e) => {
@@ -299,36 +260,22 @@ const productInfoPriceGenerate = (productCode) => {
   });
   */ 
   if (!productCode) return;
-  // http://127.0.0.1:81/WebProductPrices.hal?prod=102
-  console.log('url = ', `${window.location.origin}/WebProductPrices.hal?prod=${productCode}`);
   $.ajax({
     type: "GET",
     url: `${window.location.origin}/WebProductPrices.hal?prod=${productCode}`,
     success: (data) => {
       if (!data) return;
-      console.log('data = ', data);
       data = JSON.parse(data);
       const prices = data.prices; 
-      console.log('prices = ', prices);
-      // set first price
-      /*
-      let colorC = $(".jq-selectbox select[name='color']").val();
-      let typeC = $(".jq-selectbox select[name='type']").val();
-      let k = `${typeC}_${colorC}`;
-      let hasP = false;
-      */
 
       let pricesArray = [];
       for (let price of prices) {
         let p = price[Object.keys(price)[0]];
         if (!pricesArray.includes(p)) pricesArray.push(p);
-        console.log('price = ', p);
       }
       let maхPrice = Math.max.apply(Math,pricesArray);
       let minPrice = Math.min.apply(Math,pricesArray);
-      console.log('minPrice = ', minPrice);
-      console.log('maхPrice = ', maхPrice);
-      console.log('select = = ', $(".jq-selectbox select[name='type']"));
+
       if (minPrice != maхPrice) $('.Product .DetailsProd .ProdLi .Price').html(`€${minPrice} - ${maхPrice}`);
       else $('.Product .DetailsProd .ProdLi .Price').html(`€${minPrice}`);
 
@@ -343,17 +290,13 @@ const productInfoPriceGenerate = (productCode) => {
         allColorOption.push($(el));
       });
 
-      // if (!hasP)  $('.Product .DetailsProd .ProdLi .Price').html('-');
-      //
       $('input[name=unit]').on('input', (e) => {
         $($('input[name=unit]')).val($($('input[name=unit]')).val().replace(/[A-Za-zА-Яа-яЁё]/, ''));
-        // if (e.target.value);
       });
       $(".jq-selectbox select[name='type']").change((e) => {
         let typeCode = e.target.value;
         let colorCode = $(".jq-selectbox select[name='color']").val();
-        console.log('colorCode = ', colorCode);
-        console.log('typeCode= ', typeCode);
+
         let key = `${typeCode}_${colorCode}`;
         if ( typeCode == 'emptyMaterial') {
           $(".jq-selectbox select[name='color']").attr("disabled","disabled"); 
@@ -369,11 +312,8 @@ const productInfoPriceGenerate = (productCode) => {
           $('select[name=color]').trigger('refresh');
         } 
         for (let price of prices) {
-          console.log('price = ', price);
           let combination = Object.keys(price)[0];
           let a = combination.split('_');
-          console.log('a = =', a);
-          console.log('typeCode = ', typeCode);
           if (typeCode == a[0]) $('.Product .DetailsProd .ProdLi .Price').html(`€${price[combination]}`);
         }
         
@@ -383,7 +323,6 @@ const productInfoPriceGenerate = (productCode) => {
           let str = k.slice(0, k.lastIndexOf('_'));
           if (str == typeCode) colorCodes.push(k.slice(k.lastIndexOf('_') + 1, k.length));
         }
-        console.log('colorCodes = ', colorCodes);
         $("select[name='color']").empty();
         for (let option of allColorOption) {
           $("select[name='color']").append(option);
@@ -391,8 +330,6 @@ const productInfoPriceGenerate = (productCode) => {
        
         $(".jq-selectbox select[name='color'] option").each((i, el) => {
           let val = $(el).val();
-          console.log('el = ',$(el));
-          console.log('val = ', val);
           if (colorCodes.includes(val) || val == 'emptyColor') {
             $(el).prop('disabled', false);
           } else {
@@ -407,7 +344,6 @@ const productInfoPriceGenerate = (productCode) => {
       $(".jq-selectbox select[name='color']").change((e) => {
         let typeCode = $(".jq-selectbox select[name='type']").val();
         let colorCode = e.target.value;
-        console.log('colorCode = ', colorCode);
         if (colorCode != 'emptyColor') {
           $("a[data-target='#ModalRecommended']").attr('style', 'cursor: pointer');
           $("input[name=unit]").removeAttr("disabled");
@@ -452,7 +388,6 @@ const filtrateByUrl = () => {
   if (search.indexOf('?wsh=') === -1) return;
   const filterCode = search.slice(search.lastIndexOf('=') + 1, search.length);
   if (!filterCode) return
-  console.log('filterCode = ', filterCode);
   return filterCode;
 };
 
@@ -460,11 +395,10 @@ const SetFilterProduct = (searchCode) => {
   let liWSH = $(".filter-buttons li").map((e,l) => {
     if ($(l).attr('list-cls') == 'FilterType') return l;
   });
-  console.log('liWSH = ', liWSH);
   let cls = $(liWSH).attr("list-cls");
+  activeType = cls;
   var l = $(liWSH);
   cls = $(l).attr("list-cls");
-  console.log('cls = ', cls);
   if ($(".active_filter").length>0){
     $(".active_filter").remove();
   } else {
@@ -495,7 +429,6 @@ const SetFilterProduct = (searchCode) => {
     } else {
       $(".resultProducts div ul li").each((i, el) => {
         cls = $(el).attr("cls");
-        console.log('cls = ', cls);
         if (cls === searchCode) {
           $(el).toggleClass("active_filter_option");
           $(el).toggleClass("active");
@@ -574,12 +507,6 @@ function ClearContactForm(form){
 }
 
 $(document).ready(function(){
-  console.log('ready');
-  /*
-  if (window.location.pathname == "/") {
-    console.log('1');
-    $(document).scrollTop(0);
-  }*/
   galerySlider();
   // profile 
   if (window.location.pathname == '/cabinet-profile') getData();
@@ -605,8 +532,11 @@ $(document).ready(function(){
     } else paginationProducts.setItemsPerPage(6);
 
   });
+  /*
   const filter = filtrateByUrl(); 
-  if (filter) SetFilterProduct(filter);
+  if (filter) {
+    SetFilterProduct(filter);
+  }*/
   // end
 
   // productInfo code
@@ -626,7 +556,6 @@ $(document).ready(function(){
     type: "GET",
     url: `${window.location.origin}/WebGetFilters.hal`,
     success: (data) => {
-      // console.log('success !!! = ', data);
       if (!data) return;
       data = JSON.parse(data);
       if (!data['FilterType'] || !data['FilterType'].length) return;
@@ -686,11 +615,9 @@ $(document).ready(function(){
   $(".DetailsProd .btns-red").click(function(){
     var form = $(this).closest("form").get(0);
     if (form.type.value == 'emptyMaterial' || form.color.value == 'emptyColor' || !form.unit.value) return console.log('EMPTY!');
+
     $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.unit.value + "&item=" + form.item.value,function(data){
-      //alert(data);
-      //refresh basket
-      //location.reload();
-      console.log('509');
+
       $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
       
       $('#addedBasketAllert').show();
@@ -716,17 +643,6 @@ $(document).ready(function(){
     onDeliveryClick(2);
   });
 
-  $('#reqFiz_saveBtn').click(() => {
-    onRequisitesSaveClick(2);
-  });
-  $('#reqJur_saveBtn').click(() => {
-    onRequisitesSaveClick(1);
-  });
-  /*
-  $("[data-target='#ModalLogin']").click((e) => {
-    console.log('e = ', e);
-
-  });*/
   $("[data-target='#ModalAddCart']").click(function(e){
     var itemcode = "";
     var a = this;
@@ -774,9 +690,12 @@ $(document).ready(function(){
 
               $(".jq-selectbox select[name='color']").attr("disabled","disabled"); 
               $("a[data-target='#ModalRecommended']").attr('style', 'cursor: not-allowed');
-              console.log('input  = ', $('input[name=unit]'));
+
+              $('input[name=unit]').attr("disabled","disabled");
+              $('input[name=unit]').trigger('refresh');
               $('select[name=type]').trigger('refresh');
               $('select[name=color]').trigger('refresh');
+             
               let allColorOption = [];
               $(".jq-selectbox select[name='color'] option").each((i, el) => {
                 allColorOption.push($(el));
@@ -790,8 +709,14 @@ $(document).ready(function(){
                 e.preventDefault();
                 let typeCode = e.target.value;
                 let colorCode = $(".jq-selectbox select[name='color']").val();
-                console.log('colorCode = ', colorCode);
-                console.log('typeCode= ', typeCode);
+
+                if (colorCode == 'emptyColor' || typeCode =='emptyMaterial') {
+                  $('input[name=unit]').attr("disabled",true);
+                  $('input[name=unit]').trigger('refresh');
+                } else {
+                  $('input[name=unit]').attr("disabled", false);
+                  $('input[name=unit]').trigger('refresh');
+                }
                 let key = `${typeCode}_${colorCode}`;
                 if ( typeCode == 'emptyMaterial') {
                   $(".jq-selectbox select[name='color']").attr("disabled","disabled");
@@ -807,11 +732,8 @@ $(document).ready(function(){
                   $('select[name=color]').trigger('refresh');
                 } 
                 for (let price of prices) {
-                  console.log('price = ', price);
                   let combination = Object.keys(price)[0];
                   let a = combination.split('_');
-                  console.log('a = =', a);
-                  console.log('typeCode = ', typeCode);
                   if (typeCode == a[0]) $('.modalPrice').html(`€${price[combination]}`);
                 }
                 
@@ -821,7 +743,6 @@ $(document).ready(function(){
                   let str = k.slice(0, k.lastIndexOf('_'));
                   if (str == typeCode) colorCodes.push(k.slice(k.lastIndexOf('_') + 1, k.length));
                 }
-                console.log('colorCodes = ', colorCodes);
                 $("select[name='color']").empty();
                 for (let option of allColorOption) {
                   $("select[name='color']").append(option);
@@ -829,8 +750,6 @@ $(document).ready(function(){
                
                 $(".jq-selectbox select[name='color'] option").each((i, el) => {
                   let val = $(el).val();
-                  console.log('el = ',$(el));
-                  console.log('val = ', val);
                   if (colorCodes.includes(val) || val == 'emptyColor') {
                     $(el).prop('disabled', false);
                   } else {
@@ -846,7 +765,14 @@ $(document).ready(function(){
                 e.preventDefault();
                 let typeCode = $(".jq-selectbox select[name='type']").val();
                 let colorCode = e.target.value;
-                console.log('colorCode = ', colorCode);
+
+                if (colorCode == 'emptyColor' || typeCode =='emptyMaterial') {
+                  $('input[name=unit]').attr("disabled", true);
+                  $('input[name=unit]').trigger('refresh');
+                } else {
+                  $('input[name=unit]').attr("disabled", false);
+                  $('input[name=unit]').trigger('refresh');
+                }
                 if (colorCode != 'emptyColor') $("a[data-target='#ModalRecommended']").attr('style', 'cursor: pointer');
                 else $("a[data-target='#ModalRecommended']").attr('style', 'cursor: not-allowed');
                 let key = `${typeCode}_${colorCode}`;
@@ -865,15 +791,13 @@ $(document).ready(function(){
           $(".modal_inner_body .btns-white-red").click(function(){
             var pop = $(this).closest("#ModalAddCart");
             var form = $(this).closest("form").get(0);
-            console.log('form = ', form);
             if (form.type.value == 'emptyMaterial' || form.color.value == 'emptyColor' || !form.unit.value) return console.log('EMPTY!');
             //consol.elog(form);
-            $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.qty.value + "&item=" + form.item.value,function(data){
+            $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.unit.value + "&item=" + form.item.value,function(data){
               //alert(data);
               //refresh basket
               //location.reload();
               // span 
-              console.log('$(data).find("res").attr("qty") = ', $(data).find("res").attr("qty"));
               $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
               // $(".Cart a").html($(data).find("res").attr("qty"));
               $(pop).modal('toggle');
@@ -884,7 +808,6 @@ $(document).ready(function(){
             //alert(data);
             //refresh basket
             //location.reload();
-            console.log('$(data).find("res").attr("qty") = ', $(data).find("res").attr("qty"));
             $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
             // $(".Cart a").html($(data).find("res").attr("qty"));
           });
@@ -907,13 +830,10 @@ $(document).ready(function(){
     e.stopPropagation();
     e.preventDefault();
     var l = $(this).parent();
-    console.log('l = ',l);
     cls = $(l).attr("list-cls");
     if ($(".active_filter").length>0){
-      console.log('if');
       let activeCls = $(".active_filter").attr('list-type');
       $(".active_filter").remove();
-      console.log(activeCls, cls);
       if (activeCls != cls) {
         list = $(".filter_option .filter_list" + cls + " > div");
         sel = $(list).clone(true,true);
@@ -922,7 +842,6 @@ $(document).ready(function(){
         SetFilterSelection(sel,l);  
       }
     } else {
-      console.log('else');
       list = $(".filter_option .filter_list" + cls + " > div");
       sel = $(list).clone(true,true);
       $(sel).addClass("active_filter");
@@ -930,21 +849,8 @@ $(document).ready(function(){
       SetFilterSelection(sel,l);
     }
   });
-  /*
-  let active_filters = {};
-  let allFilterNames = [];
-  $(".filter_menu").each((i, el) => {
-    console.log('el = ', el);
-    let fName = $(el).attr('list-type');
-    if (!allFilterNames.includes(fName)) allFilterNames.push(fName);
-  });
-  console.log('allFilterNames = ', allFilterNames);
-  for (let name of allFilterNames) active_filters[name] = [];
-  console.log('active_filters = ', active_filters);
-  console.log('allFilterNames = ', allFilterNames);
-  */
+
   $(".filter_menu ul li a").click(function(e) {
-    console.log('click ul li a');
     e.stopPropagation();
     e.preventDefault();
     var l = $(this).parent();
@@ -953,7 +859,6 @@ $(document).ready(function(){
     $(l).toggleClass("active");
     
     var type = $(this).closest(".filter_menu").attr("list-type");
-    console.log('type = ', type);
     activeType = type;
     
     var opt = $(".filter-buttons > li[list-cls='" + type + "']");
@@ -968,22 +873,17 @@ $(document).ready(function(){
     }
     var cls = $(l).attr("cls").toUpperCase();
  
-   
-    // console.log('webDataArray = ', webDataArray);
     var inx = options.indexOf(cls);
     if (inx>-1){
       options.splice(inx,1);
       strvals.splice(inx,1);
     } else {
       options.push(cls);
-      //console.log('cls = ', cls);
-      //console.log('$(this).html() = ', $(this).html());
       strvals.push($(this).html());
     }
-    //console.log('opt397 = ', opt);
-    console.log('options = ', options);
+
     $(opt).data("filter_options",options);
-    console.log('$(opt).data("filter_options" = ', $(opt).data("filter_options"));
+
     $(opt).data("filter_options_str",strvals);
     if (strvals.length>0){
       $(opt).find("a").html(strvals.join(","));
@@ -996,7 +896,7 @@ $(document).ready(function(){
     if (filterNames.includes($(opt).text().toUpperCase())) {
       $(opt).removeClass('active');
     } else {
-      //console.log('opt = ', opt);
+
       $(opt).addClass('active');
       $(opt).find("a").append(`
       <svg id='span${type}' class="svg-inline--fa fa-times fa-w-11 fa-lg" aria-hidden="true" focusable="false" data-prefix="fa" data-icon="times" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512" data-fa-i2svg=""><path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
@@ -1005,9 +905,7 @@ $(document).ready(function(){
         /*
         $('.filter-buttons li a').each((index) => {
           if ($('.filter-buttons li a')[index].firstElementChild) {
-            console.log(`$('.filter-buttons li a') = `, $('.filter-buttons li a'));
             $('.filter-buttons li a')[index].firstElementChild.addEventListener('click', (e)=> {
-              console.log('fb li a = ', $('.filter-buttons li a')[index]);
               $(opt).data("filter_options", []);
               $(opt).data("filter_options_str",[]);
               $(opt).find("a").html($(opt).data("origstr"));
@@ -1045,14 +943,21 @@ $(document).ready(function(){
     pg6 = new Pagination($("#Works-tabContent #works5 > .row"),6);
   }
  
-  // setTimeout(() => {
-    // $('.ModalLogin').toggle()
-  // });
+  // lazy load imgs
+  window.addEventListener('scroll', showVisible);
+  showVisible();
+  $('.TabWrapp #Works-tab .nav-item > a').click(() => {
+    setTimeout(() => {
+      showVisible();
+    }, 300);
+  });
+  $('.ImgWork .Image-container > svg').click(() => {
+    console.log(11111111111111);
+  });
 })
 
 function RefreshFilters(){
   var filters = {};
-  console.log('refresh filters');
   $(".filter-buttons > li").each(function(){
     filters[$(this).attr("list-cls")] = $(this).data("filter_options");
     $(".product-catalog-list > div").each(function(){
@@ -1088,12 +993,8 @@ function RefreshFilters(){
   })
   filtrateFilters(filters);
 }
-
+/*
 function filtrateFilters(activeFiltersObj) {
-  console.log('webDataArray = ', webDataArray);
-  // activeType - на какой фильтр кликнул 
-  // activeFiltersObj - активные фильтры 
-  console.log('activeFiltersObj = ', activeFiltersObj);
   let showallf = true;
   for (let filterName in activeFiltersObj) {
     activeFilters[filterName] = [];
@@ -1132,13 +1033,62 @@ function filtrateFilters(activeFiltersObj) {
 
     }
   }
-  console.log('f - ', activeFilters);
-  // console.log('webDataArray = ', webDataArray);
-  // console.log('asdsd = ', $("div[list-type='FilterColor'] div ul"));
+
+  for (let aFName in activeFilters) {
+    $(`div[list-type=${aFName}] div ul li`).each((index, element) => {
+      let cls = $(element).attr('cls');
+      if (activeType !== aFName && activeFilters[aFName] && !activeFilters[aFName].includes(cls)) {
+        $(element).hide();
+      }
+      if (activeFilters[aFName].includes(cls)) $(element).show();
+    });
+  }
+}
+*/
+
+function filtrateFilters(activeFiltersObj) {
+  let showallf = true;
+  for (let filterName in activeFiltersObj) {
+    activeFilters[filterName] = [];
+    if (activeFiltersObj[filterName] && activeFiltersObj[filterName].length > 0) showallf = false;
+  }
+  if (showallf) {
+    for (let aFName in activeFilters) {
+      $(`div[list-type=${aFName}] div ul li`).each((index, element) => {
+         $(element).show();
+      });
+    }
+    return;
+  }
+
+  let filtratedWebDataArray = webDataArray
+    .filter(el => {
+      if (!activeFiltersObj.FilterType || (activeFiltersObj.FilterType && !activeFiltersObj.FilterType.length)) return true;
+      return activeFiltersObj.FilterType.includes(el[0]);
+    })
+    .filter(el => {
+      if (!activeFiltersObj.FilterMaterial || (activeFiltersObj.FilterMaterial && !activeFiltersObj.FilterMaterial.length)) return true;
+      return activeFiltersObj.FilterMaterial.includes(el[1]);
+    })
+    .filter(el => {
+      if (!activeFiltersObj.FilterColor || (activeFiltersObj.FilterColor && !activeFiltersObj.FilterColor.length)) return true;
+      return activeFiltersObj.FilterColor.includes(el[2]);
+  });
+  
+  filtratedWebDataArray.forEach((el) => {
+    if (!activeFilters.FilterType.includes(el[0])) activeFilters.FilterType.push(el[0]);
+    if (!activeFilters.FilterMaterial.includes(el[1])) activeFilters.FilterMaterial.push(el[1]);
+    if (!activeFilters.FilterColor.includes(el[2])) activeFilters.FilterColor.push(el[2]);
+  });
+
+  // console.log('filtratedWebDataArray = ', filtratedWebDataArray);
+  // console.log('activeFilters= ', activeFilters);
   for (let aFName in activeFilters) {
     $(`div[list-type=${aFName}] div ul li`).each((index, element) => {
       // console.log('element = ', element);
       let cls = $(element).attr('cls');
+      // console.log('cls ', cls);
+      // console.log('activeType = ', activeType);
       if (activeType !== aFName && activeFilters[aFName] && !activeFilters[aFName].includes(cls)) {
         $(element).hide();
       }

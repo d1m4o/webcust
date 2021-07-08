@@ -12,11 +12,9 @@ const searchFunction = (inputValue) => {
 const addListenerToSearchInput = (searchInput) => {
     if (!searchInput) return;
     searchInput.addEventListener('input', (e) => {
-        console.log('val = ', e.target.value);
         searchFunction(e.target.value);
     });
     searchInput.addEventListener('change', (e) => {
-        console.log('val = ', e.target.value);
         searchFunction(e.target.value);
     });
 };

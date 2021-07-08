@@ -8,26 +8,25 @@ $(document).ready(function(){
         $('.LoginInner').toggle();
         return false;
     }); */
-    // console.log('docready = ', JSON.parse(JSON.stringify($('#loggedIn'))));
+
+    $('.AboutUsClass a').click(() => {
+        window.location = `${window.location.origin}/par-mums#aboutUs`;
+    });
 
     $('#loggedIn').click(function (){
-        console.log('loggedIn');
         $('.LoginInner').toggle();
         return false;
     });
     // ChangePWClass
     $('.ChangePWClass a').click(() => {
-        console.log('click on change');
         $('#ModalChangePass').modal('show');
     });
     
     $('.OrderClass a').click(() => {
-        console.log('OrderClass clicked!');
         window.location = `${window.location.origin}/veikals/orders`;
     });
 
     $('.logoutClass a').click(() => {
-        console.log('logout');
         window.location = `${window.location.origin}/WebUpdatingAction.hal?action=logout&path=/`;
     });
     $('#checkoutBtn').click((e) => {

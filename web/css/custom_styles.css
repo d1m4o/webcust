@@ -101,7 +101,9 @@ ul.ui-autocomplete.ui-menu{
   max-height: 460px;
   overflow: auto; 
 }
-
+.PageCabinet .FormBox .form-group .btns-white-red {
+  padding: 11px 20px;
+}
 
 .ProductList .ProductList-menu ul li{ 
   max-height: 460px;
@@ -114,14 +116,18 @@ ul.ui-autocomplete.ui-menu{
 .ProdImg figure {
   width: 100%; /* Ширина области */
   /* Высота области */
-  height: 280px;
-  min-height: 280px;
-  max-height: 600px;
+  /* height: 280px;
+  min-height: 280px;*/
+  max-height: 280px;
   margin: 0; /* Обнуляем отступы */
   overflow: hidden; /* Прячем всё за пределами */
   /* min-width: 600px;  Минимальная ширина */
  }
 
+ .ProdImg .imageRespon {
+  max-height: 200px;
+  padding-bottom: 10px;
+}
 /* Video */
 .VideoInstruction {
   margin-bottom: -30;
@@ -230,4 +236,8 @@ ul.ui-autocomplete.ui-menu{
 
 .ProductList .ProductList-menu ul li {
   display: block;
+}
+
+#Team-tabContent .ListTeam .contact {
+  display: block; 
 }

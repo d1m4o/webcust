@@ -1,4 +1,4 @@
-
+/*
 const signInModal = `
 <div class="modal ModalLogin" id="ModalLogin" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -54,7 +54,7 @@ const signInModal = `
                     </div>   
                     <div class="form-group Last Links">
                         <a href="#" data-toggle="modal" data-dismiss="modal" data-target="#ModalForgot">Forgot password?</a>
-                        <a href="#" data-toggle="modal" data-dismiss="modal" data-target="#ModalReg" onclick="console.log('not a member!')">Not a member?</a>
+                        <a href="#" data-toggle="modal" data-dismiss="modal" data-target="#ModalReg">Not a member?</a>
                     </div>                                     
                 </form>
             </div>
@@ -238,6 +238,7 @@ const isChangePassword = `
 </div>
 </div>
 `;
+*/
 
 $(document).ready(() => {
     // $('body').append($(signInModal));
@@ -255,12 +256,8 @@ $(document).ready(() => {
     $('#signUpSubmit').click(() => {
         validateSingUp();
     })
-    document.getElementById('loginForm').addEventListener('submit', (e) => {
-        console.log('e = ', e); 
-    });
     
     $('#signInBtn').click(() => {
-        console.log('ckickeed');
         validateLogIn();
     });
     $('#closeThanksBtn').click(() => {
@@ -302,8 +299,6 @@ const onChangePwClick = () => {
         url: `${window.location.origin}/WebChangePassword.hal?company=3&NewPassword=${pw1}&RepeatNewPassword=${pw2}`,
         success: (data, message, res) => {
             if (res.status != 200) return;
-            console.log('Changed!');
-            console.log('res.responseText = ', res.responseText);
             if (res.responseText == 'Ok') {
                 $('#ModalChangePass').modal('hide');
             } else {
@@ -318,13 +313,11 @@ const onChangePwClick = () => {
 
 const forgotFunc = () => {
     const email = $('#emailForgot').val();
-    console.log('email = ', email);
     $.ajax({
         type: "POST",
         url: `${window.location.origin}/WebRestorePasswordEmail.hal?company=3&eMail=${email}`,
         success: (data, message, res) => {
             if (res.status != 200) return;
-            console.log('success');
             $('#ModalForgot').modal('hide');
             $('#ModalPwOnEmail').modal('show');
         },
@@ -421,9 +414,7 @@ const registrationFunc = (params) => {
         type: "GET",
         url: `${window.location.origin}/WebHBSRegistrationCustMM.hal?company=3&E-mail=${email}&Username=${username}`, // &Password=${password}
         success: (data, message, res) => {
-            console.log(1);
             if (res.status != 200) return;
-            console.log('res.responseText = ', res.responseText);
             if (res.responseText == 'EmailExistError') {
                 let hasClass = $(document.forms["signUpForm"]["E-mail"]).hasClass('is-invalid');
                 if (!hasClass) $(document.forms["signUpForm"]["E-mail"]).addClass('is-invalid')
@@ -446,9 +437,7 @@ const registrationFunc = (params) => {
                 
                 $('#ModalReg').modal('hide');
                 $('#ModalThanks').modal('show');
-                console.log('REGISTERED');
             }
-            console.log(2);
         },
         error: (e) => {
             console.log('error = ', e);
@@ -458,7 +447,7 @@ const registrationFunc = (params) => {
 const onSetPwClick = () => {
     const search = window.location.search;
     let searchArray = search.split('&');
-
+    console.log(11111);
     const username = searchArray[1].split('=')[1];
     const email = searchArray[2].split('=')[1];
     const token = searchArray[3].split('=')[1];
@@ -478,9 +467,9 @@ const onSetPwClick = () => {
         type: "GET",
         url: `${window.location.origin}/WebHBSStoreCustMM.hal?company=3&E-mail=${email}&Username=${username}&token=${token}&Password=${pw1}`,
         success: (data, message, res) => {
-            console.log(1);
-            if (res.status != 200) return;
+            console.log('res = ', res);
             console.log('res.responseText = ', res.responseText);
+            if (res.status != 200) return;
             if (res.responseText == 'Ok') {
                 const cooksess = document.forms["logInForm"]["cooksess"].value;
                 const custpage = '';
@@ -524,7 +513,6 @@ const onSetPwClick = () => {
                 $('#ModalReg').modal('hide');
                 $('#ModalThanks').modal('show');
             }*/
-            console.log(2);
         },
         error: (e) => {
           console.log('error = ', e);
@@ -569,7 +557,6 @@ const onSubmit_logIn = (params) => {
         url: `${window.location.origin}/dologin?cooksess=${cooksess}&custpage=${custpage}&userpage=${userpage}&company=3&login=${name}&passwd=${password}`,
         success: (data, message, res) => {
             if (res.status != 200) return;
-            console.log('res.responseText = ', res.responseText);
             if (res.responseText == 'Error') {
                 let hasClass = $(document.forms["logInForm"]["passwd"]).hasClass('is-invalid');
                 if (!hasClass) $(document.forms["logInForm"]["passwd"]).addClass('is-invalid');
