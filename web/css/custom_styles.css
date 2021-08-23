@@ -241,3 +241,15 @@ ul.ui-autocomplete.ui-menu{
 #Team-tabContent .ListTeam .contact {
   display: block; 
 }
+
+#ModalDelivery .modal-body .form-group {
+  margin-bottom: 20px;
+}
+.modal-body .form-group .form-control .is-invalid {
+  border-color: #dc3545;
+}
+.BoxModalIMG .imageRespon {
+  background: #f8f9fa;
+  max-height: 620px;
+}
+

@@ -8,10 +8,13 @@ $(document).ready(function(){
         $('.LoginInner').toggle();
         return false;
     }); */
-
-    $('.AboutUsClass a').click(() => {
-        window.location = `${window.location.origin}/par-mums#aboutUs`;
+    $('.InnerCartList > input[type=number]').change((e) => {
+        console.log('e = ', e);
     });
+    $('.AboutUsClass a').attr('href', `${window.location.origin}/par-mums#aboutUs`); 
+    /*$('.AboutUsClass a').click(() => {
+        window.location = `${window.location.origin}/par-mums#aboutUs`;
+    });*/
 
     $('#loggedIn').click(function (){
         $('.LoginInner').toggle();

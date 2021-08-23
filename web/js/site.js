@@ -131,35 +131,76 @@ const galerySlider = () => {
 // delivery
 const onDeliveryClick = (deliveryType) => {
   if (!deliveryType) return;
-  $.ajax({
-    type: "GET",
-    url: `${window.location.origin}/WebDeliveryMode.hal?mode=${deliveryType}`,
-    success: (data, message, res) => {
-      if (res.status != 200) return;
-      if (res.responseText == 'Error') {
-        console.log('Error');
-      } else if (res.responseText == 'Ok') {  
-        $.ajax({
-          type: "GET",
-          url: `${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`,
-          success: (data, message, res) => {
-            if (res.status != 200) return;
-            if (res.responseText == 'Error') {
-              console.log('Error');
-            } else if (res.responseText == 'Ok') {
-              window.location.href = `${window.location.origin}/thanks`;
+  if (deliveryType == 1 ) {
+    $.ajax({
+      type: "GET",
+      url: `${window.location.origin}/WebDeliveryMode.hal?mode=${deliveryType}`,
+      success: (data, message, res) => {
+        if (res.status != 200) return;
+        if (res.responseText == 'Error') {
+          console.log('Error');
+        } else if (res.responseText == 'Ok') {  
+          $.ajax({
+            type: "GET",
+            url: `${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`,
+            success: (data, message, res) => {
+              if (res.status != 200) return;
+              if (res.responseText == 'Error') {
+                console.log('Error');
+              } else if (res.responseText == 'Ok') {
+                window.location.href = `${window.location.origin}/thanks`;
+              }
+            },
+            error: (e) => {
+              console.log('error = ', e);
             }
-          },
-          error: (e) => {
-            console.log('error = ', e);
-          }
-        });
+          });
+        }
+      },
+      error: (e) => {
+        console.log('error = ', e);
       }
-    },
-    error: (e) => {
-      console.log('error = ', e);
-    }
-  });
+    });
+  } else {
+    const country = $('#country_dlvr').val();
+    const city = $('#city_dlvr').val();
+    const street = $('#street_dlvr').val();
+    const houseNumber = $('#hNumber_dlvr').val();
+    const zipCode = $('#code_dlvr').val();
+    // console.log(country, city, street, houseNumber, zipCode);
+    if (!country || !city || !street || !houseNumber || !zipCode) return;
+    $.ajax({
+      type: "GET",
+      url: `${window.location.origin}/WebDeliveryMode.hal?mode=${deliveryType}&country=${country}&city=${city}&street=${street}&houseNumber=${houseNumber}&zipCode=${zipCode}`,
+      success: (data, message, res) => {
+        if (res.status != 200) return;
+        if (res.responseText == 'Error') {
+          console.log('Error');
+        } else if (res.responseText == 'Ok') {
+          $('#ModalDelivery').modal('hide');
+          $.ajax({
+            type: "GET",
+            url: `${window.location.origin}/WebFinishOrder.hal?mode=${deliveryType}`,
+            success: (data, message, res) => {
+              if (res.status != 200) return;
+              if (res.responseText == 'Error') {
+                console.log('Error');
+              } else if (res.responseText == 'Ok') {
+                window.location.href = `${window.location.origin}/thanks`;
+              }
+            },
+            error: (e) => {
+              console.log('error = ', e);
+            }
+          });
+        }
+      },
+      error: (e) => {
+        console.log('error = ', e);
+      }
+    });
+  }
+  
 };
 // ---------------------------------------------- end delivery --------------------
 
@@ -639,7 +680,12 @@ $(document).ready(function(){
   $(".DeliveryWrapp .deliv1").click(() => {
     onDeliveryClick(1);
   });
+
   $(".DeliveryWrapp .deliv2").click(() => {
+    $('#ModalDelivery').modal('show');
+  });
+
+  $('#onOkDelivery').click(() => {
     onDeliveryClick(2);
   });
 
@@ -815,10 +861,13 @@ $(document).ready(function(){
       });
     }
   });
-  $(".InnerCartList .number-plus-minus input").change(function(){
+  $(".InnerCartList .number-plus-minus input").change(function(e) {
+    const val = parseInt(e.target.value, 10);
+    if (isNaN(val)) return;
+    if (val > 100) e.target.value = 100;
     $.get("/WebUpdatingAction.hal?action=updatebasketqty&rownr=" + $(this).attr("rw") + "&qty=" + $(this).val(),function(){
       location.reload();
-    })
+    });
   });
   $(".InnerCartList .DelCart").click(function(){
     $.get("/WebUpdatingAction.hal?action=removefrombasket&rownr=" + $(this).attr("rw"),function(){
@@ -992,6 +1041,7 @@ function RefreshFilters(){
     });
   })
   filtrateFilters(filters);
+  showVisible();
 }
 /*
 function filtrateFilters(activeFiltersObj) {
