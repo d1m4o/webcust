@@ -8,6 +8,13 @@ function isVisible(elem) {
   return topVisible || bottomVisible;
 }
 
+function backToProductCatalog() {
+  let filter = localStorage.getItem('FilterType');
+  if (filter) {
+    window.location = `${window.location.origin}/veikals/catalog?wsh=${filter}#products`;
+  } else window.location = `${window.location.origin}/veikals/catalog#products`;
+}
+
 /*
 
 function isVisible(elem) {
@@ -307,7 +314,7 @@ const productInfoPriceGenerate = (productCode) => {
     success: (data) => {
       if (!data) return;
       data = JSON.parse(data);
-      const prices = data.prices; 
+      const prices = data.prices;
 
       let pricesArray = [];
       for (let price of prices) {
@@ -327,9 +334,30 @@ const productInfoPriceGenerate = (productCode) => {
       $('select[name=type]').trigger('refresh');
       $('select[name=color]').trigger('refresh');
       let allColorOption = [];
+      let allMaterial = [];
+
       $(".jq-selectbox select[name='color'] option").each((i, el) => {
         allColorOption.push($(el));
       });
+
+      $(".jq-selectbox select[name='type'] option").each((i, el) => {
+        allMaterial.push($(el));
+      });
+      // console.log('allMaterial = ', allMaterial);
+      if (allMaterial.length == 2) { // case: if only 1 material
+        $(".jq-selectbox select[name='type'] option[value='']").prop('selected', true);
+        $(".jq-selectbox select[name='type']").attr("disabled", true);
+        $(".jq-selectbox select[name='color']").attr("disabled", false);
+        $('select[name=type]').trigger('refresh');
+        $('select[name=color]').trigger('refresh');
+      }
+
+      if (allMaterial.length < 2) {
+        $(".jq-selectbox select[name='type']").parent().parent().parent().remove();
+        $(".jq-selectbox select[name='color']").attr("disabled", false);
+        $('select[name=color]').trigger('refresh');
+      }
+
 
       $('input[name=unit]').on('input', (e) => {
         $($('input[name=unit]')).val($($('input[name=unit]')).val().replace(/[A-Za-zА-Яа-яЁё]/, ''));
@@ -400,6 +428,8 @@ const productInfoPriceGenerate = (productCode) => {
           }
         }
       });
+
+
     },
     error: (e) => {
       console.log('error = ', e);
@@ -655,14 +685,18 @@ $(document).ready(function(){
 
   $(".DetailsProd .btns-red").click(function(){
     var form = $(this).closest("form").get(0);
-    if (form.type.value == 'emptyMaterial' || form.color.value == 'emptyColor' || !form.unit.value) return console.log('EMPTY!');
-
-    $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.unit.value + "&item=" + form.item.value,function(data){
-
+    
+    if (form.type && form.type.value == 'emptyMaterial' || form.color.value == 'emptyColor' || !form.unit.value) return console.log('EMPTY!');
+    const typeVal = form.type ? form.type.value : '';
+    $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + typeVal + "&color=" + form.color.value + "&qty=" + form.unit.value + "&item=" + form.item.value,function(data){
+      console.log(`${'/WebUpdatingAction.hal?action=mm_addtobasket&type=' + typeVal + "&color=" + form.color.value + "&qty=" + form.unit.value + "&item=" + form.item.value}`);
+      console.log('data = ', $(data).find("res").attr("qty"));
+      console.log('data  dd = ', $(data).find("res"));
+      console.log('data ', data);
       $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
       
       $('#addedBasketAllert').show();
-      form.type.value = 'emptyMaterial';
+      if (form.type) form.type.value = 'emptyMaterial';
       form.color.value = 'emptyColor';
       form.unit.value = '';
       $('select[name=type]').trigger('refresh');
@@ -711,7 +745,9 @@ $(document).ready(function(){
           $("#ModalAddCart .modal_inner_body").html(data);
           $("#ModalAddCart .modal_inner_body").find('input[type=checkbox], select, input[type=radio], input[type=file],input[type=number]').styler({
               selectSearch: true,
-              selectSearchLimit: 5
+              selectSearchLimit: 5,
+              selectSearchNotFound: ' ',
+              selectSearchPlaceholder: '...',
           });
           //================Custom filter=============
 
@@ -880,7 +916,7 @@ $(document).ready(function(){
     e.preventDefault();
     var l = $(this).parent();
     cls = $(l).attr("list-cls");
-    if ($(".active_filter").length>0){
+    if ($(".active_filter").length>0) {
       let activeCls = $(".active_filter").attr('list-type');
       $(".active_filter").remove();
       if (activeCls != cls) {
@@ -900,15 +936,24 @@ $(document).ready(function(){
   });
 
   $(".filter_menu ul li a").click(function(e) {
+    
     e.stopPropagation();
     e.preventDefault();
-    var l = $(this).parent();
+    let type = $(this).closest(".filter_menu").attr("list-type");
+    let l = $(this).parent();
+
+    if (type == 'FilterType') {
+      let fListBtn = $(".filter-buttons > li[list-cls='" + type + "']");
+      let activeFiltersList = $(fListBtn).data("filter_options");
+      let clsAtr = $(l).attr("cls").toUpperCase();
+
+      if (activeFiltersList && activeFiltersList.length && !activeFiltersList.includes(clsAtr)) return;
+    }
+
+    activeType = type;
     
     $(l).toggleClass("active_filter_option");
     $(l).toggleClass("active");
-    
-    var type = $(this).closest(".filter_menu").attr("list-type");
-    activeType = type;
     
     var opt = $(".filter-buttons > li[list-cls='" + type + "']");
     var options = $(opt).data("filter_options");
@@ -945,7 +990,6 @@ $(document).ready(function(){
     if (filterNames.includes($(opt).text().toUpperCase())) {
       $(opt).removeClass('active');
     } else {
-
       $(opt).addClass('active');
       $(opt).find("a").append(`
       <svg id='span${type}' class="svg-inline--fa fa-times fa-w-11 fa-lg" aria-hidden="true" focusable="false" data-prefix="fa" data-icon="times" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512" data-fa-i2svg=""><path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
@@ -1040,6 +1084,8 @@ function RefreshFilters(){
       }
     });
   })
+  // console.log('filters = ', filters);
+  localStorage.setItem('FilterType', filters['FilterType']);
   filtrateFilters(filters);
   showVisible();
 }

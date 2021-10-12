@@ -43,6 +43,10 @@ $(document).ready(function(){
         return false;
     });     
     $('#myCabResp').click(function (){
+        if (!$('.LoginInner ul li').length) {
+            $('#ModalLogin').modal('show');
+            return false;
+        }
         $(".LoginInner").toggle();
         $(this).toggleClass('active');
         return false;
@@ -138,7 +142,10 @@ $(document).ready(function(){
         }        
     });     
     $('input[type=checkbox], select, input[type=radio], input[type=file],input[type=number]').styler({
-        selectSearch: true
+        selectSearch: true,
+        selectSearchNotFound: ' ',
+        selectSearchPlaceholder: '...',
+        selectSearchLimit: 5
     }); 
     /*
    /* $('#MapProduct').click(function (){
