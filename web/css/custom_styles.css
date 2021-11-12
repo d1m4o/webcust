@@ -111,7 +111,7 @@ ul.ui-autocomplete.ui-menu{
 }
 
 .ProductList .ProductList-item .ProdInfo .text{
-  height: 44px;
+  height: 54px;
 }
 .ProdImg figure {
   width: 100%; /* Ширина области */
@@ -157,8 +157,8 @@ ul.ui-autocomplete.ui-menu{
   }
 
 .ProductList .ProductList-item .ProdInfo .text {
-  max-height: 44px;
-  overflow: hidden;
+  max-height: 54px;
+  overflow: visible;
 }
 /* gallery img styles */
 .Image-container {

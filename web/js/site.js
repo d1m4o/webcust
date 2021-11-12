@@ -469,6 +469,7 @@ const SetFilterProduct = (searchCode) => {
   let cls = $(liWSH).attr("list-cls");
   activeType = cls;
   var l = $(liWSH);
+  console.log('l = ', l);
   cls = $(l).attr("list-cls");
   if ($(".active_filter").length>0){
     $(".active_filter").remove();
@@ -534,6 +535,17 @@ const SetFilterProduct = (searchCode) => {
     }
     onFilterClick(); // rebuild pagination after filtrated
     // end
+    $(".resultProducts div ul li").each((i, el) => {
+      cls = $(el).attr("cls");
+      if (cls === searchCode) {
+        if ($(el).hasClass('active')) {
+          let a = $(el).find('a');
+          $(a).append(`
+          <svg class="svg-inline--fa fa-times fa-w-11" style='vertical-align: -0.15em; margin-left: 10px;' data-prefix="fa" data-icon="times" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512" data-fa-i2svg=""><path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+          `);
+        }
+      }
+    });
   }
 };
 
@@ -689,12 +701,8 @@ $(document).ready(function(){
     if (form.type && form.type.value == 'emptyMaterial' || form.color.value == 'emptyColor' || !form.unit.value) return console.log('EMPTY!');
     const typeVal = form.type ? form.type.value : '';
     $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + typeVal + "&color=" + form.color.value + "&qty=" + form.unit.value + "&item=" + form.item.value,function(data){
-      console.log(`${'/WebUpdatingAction.hal?action=mm_addtobasket&type=' + typeVal + "&color=" + form.color.value + "&qty=" + form.unit.value + "&item=" + form.item.value}`);
-      console.log('data = ', $(data).find("res").attr("qty"));
-      console.log('data  dd = ', $(data).find("res"));
-      console.log('data ', data);
-      $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
-      
+      // $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
+      $(".Cart a").html(`<span class='CartNumb'>${parseInt($(".CartNumb").html(), 10) + parseInt(form.unit.value, 10)} </span>`);
       $('#addedBasketAllert').show();
       if (form.type) form.type.value = 'emptyMaterial';
       form.color.value = 'emptyColor';
@@ -735,14 +743,18 @@ $(document).ready(function(){
       itemcode = $(this).closest(".ProductList-item").attr("itemcode");
       qty = $(this).closest(".ProductList-item").find("[name='qty']").val();
     }
+ 
     if ($(this).get(0).hasAttribute("data-toggle")==false) {
       e.stopPropagation();
       e.preventDefault();
     }
+
     if (itemcode!=""){
       $.get("/WebAction.hal?action=getitemvars&item=" + itemcode,function(data){
+        
         if (data!=""){
           $("#ModalAddCart .modal_inner_body").html(data);
+          
           $("#ModalAddCart .modal_inner_body").find('input[type=checkbox], select, input[type=radio], input[type=file],input[type=number]').styler({
               selectSearch: true,
               selectSearchLimit: 5,
@@ -755,6 +767,7 @@ $(document).ready(function(){
             type: "GET",
             url: `${window.location.origin}/WebProductPrices.hal?prod=${itemcode}`,
             success: (data) => {
+              console.log('data 2= ', data);
               if (!data) return;
               data = JSON.parse(data);
               const prices = data.prices; 
@@ -769,9 +782,11 @@ $(document).ready(function(){
               //
               if (maхPrice != minPrice) $('.modalPrice').html(`€${minPrice} - ${maхPrice}`);
               else $('.modalPrice').html(`€${minPrice}`);
-
-              $(".jq-selectbox select[name='color']").attr("disabled","disabled"); 
-              $("a[data-target='#ModalRecommended']").attr('style', 'cursor: not-allowed');
+              
+              if ($(".jq-selectbox select[name='unit']").val() !== undefined) {
+                $(".jq-selectbox select[name='color']").attr("disabled","disabled"); 
+                $("a[data-target='#ModalRecommended']").attr('style', 'cursor: not-allowed');
+              }
 
               $('input[name=unit]').attr("disabled","disabled");
               $('input[name=unit]').trigger('refresh');
@@ -800,6 +815,7 @@ $(document).ready(function(){
                   $('input[name=unit]').trigger('refresh');
                 }
                 let key = `${typeCode}_${colorCode}`;
+               
                 if ( typeCode == 'emptyMaterial') {
                   $(".jq-selectbox select[name='color']").attr("disabled","disabled");
                   if (minPrice != maхPrice) $('.modalPrice').html(`€${minPrice} - ${maхPrice}`);
@@ -873,14 +889,12 @@ $(document).ready(function(){
           $(".modal_inner_body .btns-white-red").click(function(){
             var pop = $(this).closest("#ModalAddCart");
             var form = $(this).closest("form").get(0);
-            if (form.type.value == 'emptyMaterial' || form.color.value == 'emptyColor' || !form.unit.value) return console.log('EMPTY!');
-            //consol.elog(form);
-            $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + form.type.value + "&color=" + form.color.value + "&qty=" + form.unit.value + "&item=" + form.item.value,function(data){
-              //alert(data);
-              //refresh basket
-              //location.reload();
-              // span 
-              $(".Cart a").html(`<span class='CartNumb'>${parseInt($(data).find("res").attr("qty"), 10)} </span>`);
+
+            if (form.type && form.type.value == 'emptyMaterial' || form.color.value == 'emptyColor' || !form.unit.value) return console.log('EMPTY!');
+            const typeVal = form.type ? form.type.value : '';
+            $.get("/WebUpdatingAction.hal?action=mm_addtobasket&type=" + typeVal + "&color=" + form.color.value + "&qty=" + form.unit.value + "&item=" + form.item.value,function(data){
+
+              $(".Cart a").html(`<span class='CartNumb'>${parseInt($(".CartNumb").html(), 10) + parseInt(form.unit.value, 10)} </span>`);
               // $(".Cart a").html($(data).find("res").attr("qty"));
               $(pop).modal('toggle');
             })
@@ -912,6 +926,7 @@ $(document).ready(function(){
   });
   
   $(".filter-buttons li a").click(function(e){
+    console.log('11');
     e.stopPropagation();
     e.preventDefault();
     var l = $(this).parent();
@@ -936,26 +951,79 @@ $(document).ready(function(){
   });
 
   $(".filter_menu ul li a").click(function(e) {
-    
+    console.log(2);
     e.stopPropagation();
     e.preventDefault();
     let type = $(this).closest(".filter_menu").attr("list-type");
     let l = $(this).parent();
-
     if (type == 'FilterType') {
       let fListBtn = $(".filter-buttons > li[list-cls='" + type + "']");
       let activeFiltersList = $(fListBtn).data("filter_options");
       let clsAtr = $(l).attr("cls").toUpperCase();
+      console.log('activeFiltersList = ', activeFiltersList);
 
-      if (activeFiltersList && activeFiltersList.length && !activeFiltersList.includes(clsAtr)) return;
+      if (activeFiltersList && activeFiltersList.length && !activeFiltersList.includes(clsAtr)) {
+        return;
+        
+        var opt = $(".filter-buttons > li[list-cls='" + type + "']");
+        var oldOptions = $(opt).data("filter_options");
+        var oldType = oldOptions[0];
+        var oldL = $(".filter_menu ul li[cls='" + oldOptions[0] + "']");
+        console.log('oldL   ', oldL);
+        console.log('oldType :>> ', oldType);
+        // $(oldOpt).removeClass('active');
+        $(oldL).toggleClass("active_filter_option");
+        $(oldL).toggleClass("active");
+
+        var cls = $(l).attr("cls").toUpperCase(); // clickable cls #cat_7
+
+        console.log('cls = ', cls);
+        // console.log('options = ', options);
+       
+        var strvals = [$(this).html()];
+        console.log('strvals = ', strvals);
+        
+        console.log('inx = ', inx);
+        var options = [cls];
+        var inx = options.indexOf(cls);
+        $(opt).data("filter_options", options)
+        $(opt).data("filter_options_str", strvals)
+        // console.log(options.splice(inx,1));
+        if (strvals.length>0){
+          $(opt).find("a").html(strvals.join(","));
+        } else {
+          $(opt).find("a").html($(opt).data("origstr"));
+        }
+        RefreshFilters();
+        onFilterClick();
+        
+        $(opt).find("a").append(`
+        <svg id='span${type}' class="svg-inline--fa fa-times fa-w-11 fa-lg" aria-hidden="true" focusable="false" data-prefix="fa" data-icon="times" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512" data-fa-i2svg=""><path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+        `);
+          $(`#span${type}`).click((e) => {
+            $(opt).data("filter_options", []);
+            $(opt).data("filter_options_str",[]);
+            $(opt).find("a").html($(opt).data("origstr"));
+            RefreshFilters();
+            onFilterClick();
+            $(opt).removeClass('active');
+          });
+      }
     }
 
     activeType = type;
+    console.log('l = ', l);
     
     $(l).toggleClass("active_filter_option");
     $(l).toggleClass("active");
+
+
+    if (!$(l).hasClass('active')) {
+      $(this).find('svg').remove()
+    } 
     
     var opt = $(".filter-buttons > li[list-cls='" + type + "']");
+    // console.log('opt = ', opt);
     var options = $(opt).data("filter_options");
     if (!options){
       options = [];
@@ -966,16 +1034,19 @@ $(document).ready(function(){
       $(opt).data("origstr",$(opt).find("a").html());
     }
     var cls = $(l).attr("cls").toUpperCase();
- 
     var inx = options.indexOf(cls);
+
     if (inx>-1){
       options.splice(inx,1);
       strvals.splice(inx,1);
     } else {
+      // options = [];
       options.push(cls);
+      // strvals = [];
       strvals.push($(this).html());
     }
 
+    console.log('strvals :>> ', strvals);
     $(opt).data("filter_options",options);
 
     $(opt).data("filter_options_str",strvals);
@@ -987,7 +1058,14 @@ $(document).ready(function(){
     RefreshFilters();
     
     onFilterClick(); // rebuild pagination after filtrated
+    if ($(l).hasClass('active')) {
+      $(this).append(`
+      <svg class="svg-inline--fa fa-times fa-w-11" style='vertical-align: -0.15em; margin-left: 10px;' data-prefix="fa" data-icon="times" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512" data-fa-i2svg=""><path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+      `);
+    }
+
     if (filterNames.includes($(opt).text().toUpperCase())) {
+      console.log(1039);
       $(opt).removeClass('active');
     } else {
       $(opt).addClass('active');

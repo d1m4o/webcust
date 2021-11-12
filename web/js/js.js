@@ -112,12 +112,27 @@ $(document).ready(function(){
         width: 960,
         height: 500,
         arrows: true,
-        buttons: false,
+        buttons: true,
         waitForLayers: true,
         fade: true,
         autoplay: false,
-        autoScaleLayers: false
+        autoScaleLayers: false,
+        // autoHeight: true
     });
+    $('.sp-arrow').css('cursor', 'pointer');
+    $('.sp-thumbnail').css('cursor', 'pointer');
+   
+    $('#ProdSlider').on('click', (event) => {
+        if (event.target.className == 'sp-image') {
+            const gallery = new Viewer(document.getElementById('ProdSlider'), {
+                filter(image) {
+                    if (image.className == 'sp-image') return image
+                },
+            });
+            gallery.show();
+        }
+    });
+
 
     $('#ProdListSlide').owlCarousel({
         loop:false,

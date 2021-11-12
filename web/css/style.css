@@ -726,7 +726,7 @@ header {
       z-index: 1;
       white-space: nowrap;
       width: 300px;
-      overflow: hidden;
+      /* overflow: hidden; */
       text-overflow: ellipsis; }
       .ProductSlider .BoxImageProd .TitleProd a {
         color: #405584; }
